@@ -1,0 +1,16 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<br>
+<div class="card">
+    <div class="card-body">
+        <p>Are you sure you want to delete this order?</p>
+        <form action="{% url 'delete_order' orders.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+            <input class="btn btn-danger" type="submit" name="Confirm">
+        <h5 class="card-title mt-3">Order ID: {{ orders.id }}</h5>
+        <p class="card-text">Customer: {{ orders.customer.name }}</p>
+</div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --neon-purple: #8b5cf6;
+        --neon-blue: #3b82f6;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 0%, hsla(225,39%,10%,1) 0, transparent 50%), 
+                    #020617;
+        color: #f8fafc;
+        min-height: 100vh;
+    }
+
+    .tag-header {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tag-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .tag-card {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tag-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--neon-purple);
+        box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.4);
+    }
+
+    /* Animated Glow Background on Hover */
+    .tag-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .tag-card:hover::after {
+        opacity: 1;
+    }
+
+    .tag-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: white;
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        z-index: 1;
+    }
+
+    .tag-info {
+        z-index: 1;
+    }
+
+    .tag-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 2px;
+        display: block;
+    }
+
+    .tag-meta {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-create-tag {
+        background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 700;
+        color: white;
+        transition: transform 0.2s;
+    }
+
+    .btn-create-tag:hover {
+        transform: scale(1.05);
+        color: white;
+    }
+</style>
+
+<div class="container py-5">
+    
+    <div class="tag-header">
+        <div>
+            <h2 class="fw-bold mb-0"><i class="fas fa-tags me-3 text-primary"></i>Classification Hub</h2>
+            <p class="text-white mb-0 small mt-1">Manage and organize your product taxonomies</p>
+        </div>
+        <a href="{% url 'import_tag_csv' %}"
+        class="btn btn-create-tag shadow-sm">
+       <i class="fas fa-plus-circle me-2"></i>New Category
+       </a>
+
+    </div>
+       
+    <div class="tag-grid">
+        {% for i in tags %}
+        <div class="tag-card shadow-sm">
+            <div class="tag-avatar">
+                {{ i.name|slice:":1"|upper }}
+            </div>
+            <div class="tag-info">
+                <span class="tag-name">{{ i.name }}</span>
+                <span class="tag-meta">Product Tag</span>
+            </div>
+            <i class="fas fa-hashtag position-absolute" style="right: -10px; bottom: -10px; font-size: 4rem; opacity: 0.03; transform: rotate(-15deg);"></i>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="p-5 rounded-4" style="background: var(--glass-bg); border: 2px dashed var(--glass-border);">
+                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No tags found in the hub.</h5>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

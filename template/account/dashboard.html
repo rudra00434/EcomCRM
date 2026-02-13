@@ -1,0 +1,359 @@
+{% extends 'main.html' %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+        --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        --info-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        --danger-gradient: linear-gradient(135deg, #dc3545, #ff6b81);
+        --secondary-gradient: linear-gradient(135deg, #6c757d, #adb5bd);
+        --dark-gradient: linear-gradient(135deg, #212529, #343a40);
+        --light-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        --glass-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    body { background-color: #f8fafc; color: #1e293b; }
+
+    /* ================= CLOCK WIDGET STYLES ================= */
+    .clock-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+
+    .clock-widget {
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 1rem;
+        padding: 12px 24px;
+        display: inline-flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    }
+
+    .clock-time {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #4338ca;
+        letter-spacing: 1px;
+    }
+
+    .clock-date-group {
+        display: flex;
+        flex-direction: column;
+        border-left: 2px solid #f1f5f9;
+        padding-left: 15px;
+    }
+
+    .clock-day {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #6366f1;
+        font-weight: 800;
+    }
+
+    .clock-date {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    /* ================= END CLOCK STYLES ================= */
+
+    .stat-card {
+        border: none;
+        border-radius: 1.25rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1) !important;
+    }
+
+    .stat-icon {
+        position: absolute;
+        right: -10px;
+        bottom: -10px;
+        font-size: 5rem;
+        opacity: 0.15;
+        transform: rotate(-15deg);
+    }
+
+    .main-card {
+        border: none;
+        border-radius: 1.5rem;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+    }
+
+    .card-header-custom {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        background: transparent;
+    }
+
+    .table { border-collapse: separate; border-spacing: 0 10px; }
+    .table thead th { border: none; background: transparent; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+    .table tbody tr { transition: all 0.2s; border-radius: 1rem; }
+    .table tbody tr td { background: #ffffff; border: none; padding: 1rem; vertical-align: middle; }
+    .table tbody tr td:first-child { border-radius: 1rem 0 0 1rem; }
+    .table tbody tr td:last-child { border-radius: 0 1rem 1rem 0; }
+    .table tbody tr:hover td { background: #f1f5f9; }
+
+    .btn-custom { border-radius: 0.75rem; padding: 0.5rem 1.25rem; font-weight: 600; transition: all 0.3s; }
+    .badge-pill { border-radius: 50px; padding: 0.5em 1em; font-weight: 500; }
+
+.recent-header {
+    background: linear-gradient(135deg, #0d6efd, #3d8bfd);
+    color: white;
+}
+.icon-circle {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13,110,253,0.12);
+    border-radius: 50%;
+}
+
+
+</style>
+<div class="card card-body p-4 rounded-4 mb-3"
+     style="background: linear-gradient(135deg, #1d2b64, #3f5efb);">
+    <div class="d-flex align-items-center justify-content-between text-white">
+        <div>
+            <h6 class="opacity-75 mb-1">Welcome back 👋</h6>
+            <h3 class="fw-bold mb-0">{{ request.user.username }}</h3>
+        </div>
+        <div class="rounded-circle bg-white bg-opacity-25 d-flex align-items-center justify-content-center"
+             style="width:52px;height:52px;">
+            <i class="bi bi-person-fill fs-4"></i>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid py-4">
+
+    <div class="clock-container">
+        <div class="clock-widget shadow-sm">
+            <div class="clock-time">
+                <span id="txt-time">00:00:00</span>
+            </div>
+            <div class="clock-date-group">
+                <span class="clock-day" id="txt-day">---</span>
+                <span class="clock-date" id="txt-date">--- --, ----</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5 g-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card shadow-sm text-white h-100" style="background: var(--primary-gradient);">
+                <div class="card-body p-4">
+                    <i class="fas fa-users stat-icon"></i>
+                    <h6 class="text-uppercase fw-bold opacity-75 mb-2" style="font-size: 0.8rem;">Total Orders</h6>
+                    <h2 class="display-6 fw-bold mb-0">{{ orders.count }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card shadow-sm text-white h-100" style="background: var(--danger-gradient);">
+                <div class="card-body p-4">
+                    <i class="fas fa-clock stat-icon"></i>
+                    <h6 class="text-uppercase fw-bold opacity-75 mb-2" style="font-size: 0.8rem;">Pending Orders</h6>
+                    <h2 class="display-6 fw-bold mb-0">{{ pending }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card shadow-sm text-white h-100" style="background: var(--warning-gradient);">
+                <div class="card-body p-4">
+                    <i class="fas fa-truck stat-icon"></i>
+                    <h6 class="text-uppercase fw-bold opacity-75 mb-2" style="font-size: 0.8rem;">Delivered</h6>
+                    <h2 class="display-6 fw-bold mb-0">{{ delivered }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card shadow-sm text-white h-100" style="background: var(--success-gradient);">
+                <div class="card-body p-4">
+                    <i class="fas fa-truck stat-icon"></i>
+                    <h6 class="text-uppercase fw-bold opacity-75 mb-2" style="font-size: 0.8rem;">Out for Delivery</h6>
+                    <h2 class="display-6 fw-bold mb-0">{{ out_for_delivery }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card main-card shadow-sm">
+                <div class="card-header-custom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-indigo-900">
+                        <i class="fas fa-user-friends me-2 text-primary"></i>Customers
+                    </h5>
+                    <a class="btn btn-primary btn-sm btn-custom shadow-sm" href="{% url 'create_customer' %}">
+                        <i class="fas fa-plus-circle me-1"></i> Add New
+                    </a>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Phone</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for customer in customers %}
+                                <tr>
+                                    <td class="fw-bold">{{ customer.name }}</td>
+                                    <td class="text-muted">{{ customer.phone }}</td>
+                                    <td class="text-end">
+                                        <a class="btn btn-sm btn-light btn-custom border" href="{% url 'customer' customer.id %}">
+                                            View Profile
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+    <div class="card main-card shadow-sm border-0 rounded-4">
+
+        <!-- Header -->
+        <div class="card-header bg-white border-0 pt-4 pb-2 px-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <div class="d-flex align-items-center">
+                    <div class="icon-circle me-2">
+                        <i class="bi bi-clock-history fs-5 text-primary"></i>
+                    </div>
+                    <h5 class="mb-0 fw-semibold">Recent Activity</h5>
+                </div>
+
+                <a class="btn btn-primary btn-sm rounded-3 px-3 shadow-sm"
+                   href="{% url 'create_orders' %}">
+                    <i class="bi bi-plus-lg me-1"></i> Place New Order
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body px-4 pt-3 pb-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th class="fw-semibold">Product</th>
+                            <th class="fw-semibold">Date</th>
+                            <th class="fw-semibold">Status</th>
+                            <th class="text-center fw-semibold">Manage</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for order in orders|slice:":5" %}
+                        <tr>
+                            <td class="fw-semibold text-dark">{{ order.product }}</td>
+
+                            <td class="text-muted small">
+                                {{ order.date_created }}
+                            </td>
+
+                            <td>
+                                <span class="badge rounded-pill px-3 py-2
+                                    {% if order.status == 'Delivered' %}
+                                        bg-success-subtle text-success border border-success
+                                    {% elif order.status == 'Pending' %}
+                                        bg-warning-subtle text-warning-emphasis border border-warning
+                                    {% else %}
+                                        bg-light text-secondary border
+                                    {% endif %}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a class="btn btn-sm btn-light border rounded-start"
+                                       href="{% url 'update_order' order.id %}">
+                                        <i class="fas fa-edit text-primary"></i>
+                                    </a>
+
+                                    <a class="btn btn-sm btn-light border rounded-end"
+                                       href="{% url 'delete_order' order.id %}">
+                                        <i class="fas fa-trash text-danger"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        document.getElementById('txt-time').innerHTML = `<span class="pulse-dot"></span>${hours}:${minutes}:${seconds}`;
+        document.getElementById('txt-day').textContent = days[now.getDay()];
+        document.getElementById('txt-date').textContent = `${months[now.getMonth()]} ${String(now.getDate()).padStart(2, '0')}, ${now.getFullYear()}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
+
+{% endblock %}

@@ -1,0 +1,245 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    :root {
+        --customer-primary: #6366f1; /* Indigo */
+        --customer-secondary: #a855f7; /* Purple */
+        --glass-white: rgba(255, 255, 255, 0.98);
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        /* Vibrant Mesh Gradient to match the order form style */
+        background: radial-gradient(at 0% 0%, hsla(263, 93%, 16%, 1) 0, transparent 50%), 
+                    radial-gradient(at 100% 100%, hsla(243, 75%, 58%, 1) 0, transparent 50%),
+                    #1e1b4b;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+
+    .form-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 90vh;
+        padding: 60px 20px;
+    }
+
+    /* Vibrant Customer Card */
+    .customer-card {
+        background: var(--glass-white);
+        border-radius: 30px;
+        width: 100%;
+        max-width: 520px;
+        position: relative;
+        padding: 60px 35px 40px 35px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes cardAppear {
+        from { opacity: 0; transform: scale(0.95) translateY(30px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Floating Profile Avatar */
+    .profile-avatar {
+        position: absolute;
+        top: -45px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90px;
+        height: 90px;
+        background: linear-gradient(135deg, var(--customer-primary) 0%, var(--customer-secondary) 100%);
+        border-radius: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2.5rem;
+        box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+        border: 5px solid var(--glass-white);
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .form-header h2 {
+        font-weight: 800;
+        color: #0f172a;
+        font-size: 1.75rem;
+        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+    }
+
+    .form-header p {
+        color: #64748b;
+        font-size: 0.95rem;
+    }
+
+    /* Custom Field Styling */
+    .field-box p {
+        margin-bottom: 1.5rem;
+    }
+
+    .field-box label {
+        display: block;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .field-box input, 
+    .field-box select,
+    .field-box textarea {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #f1f5f9;
+        border-radius: 14px;
+        background: #f8fafc;
+        font-size: 1rem;
+        transition: all 0.25s ease;
+    }
+
+    .field-box input:focus {
+        border-color: var(--customer-primary);
+        background: white;
+        outline: none;
+        box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.1);
+    }
+
+    /* Action Buttons */
+    .btn-submit-customer {
+        background: linear-gradient(to right, #4f46e5, #7c3aed);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .btn-submit-customer:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(79, 70, 229, 0.4);
+        filter: brightness(1.1);
+    }
+
+    .btn-cancel-customer {
+        background: transparent;
+        color: #94a3b8;
+        border: 2px solid #e2e8f0;
+        padding: 14px;
+        border-radius: 16px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel-customer:hover {
+        background: #f1f5f9;
+        color: #475569;
+        border-color: #cbd5e1;
+    }
+
+    /* Trust Badge */
+    .security-tag {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid #f1f5f9;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    
+
+</style>
+
+<div class="form-wrapper">
+    <div class="customer-card">
+        
+        <div class="profile-avatar">
+            <i class="fas fa-user-tie"></i>
+        </div>
+
+        <div class="form-header">
+            <h2>Customer Profile</h2>
+            <p>Maintain precise client records for your network</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" autocomplete="off">
+
+            {% csrf_token %}
+
+            <div class="field-box">
+                {{ form.as_p }}
+            </div>
+            <button type="button" onclick="getLocation()" 
+               class="btn btn-info w-100 mt-2">
+                📍 Use Current Location
+            </button>
+
+            <div class="d-grid gap-3 mt-4">
+                <button type="submit" class="btn-submit-customer">
+                    <i class="fas fa-user-check"></i> Save Account
+                </button>
+                <a href="/" class="btn-cancel-customer">
+                    Discard Changes
+                </a>
+            </div>
+        </form>
+
+        <div class="security-tag">
+            <i class="fas fa-user-shield text-primary"></i>
+            Authorized Admin Access Only • Encrypted Storage
+        </div>
+
+    </div>
+</div>
+
+<script>
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+    } else {
+        alert("Geolocation not supported");
+    }
+}
+
+function success(position) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    document.getElementById("id_latitude").value = lat;
+    document.getElementById("id_longitude").value = lng;
+
+    alert("Location captured successfully!");
+}
+
+function error() {
+    alert("Permission denied or unavailable");
+}
+</script>
+
+
+{% endblock %}

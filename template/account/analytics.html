@@ -1,0 +1,262 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --accent-purple: #8b5cf6;
+        --accent-cyan: #06b6d4;
+        --accent-rose: #f43f5e;
+        --text-dim: #94a3b8;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        /* Deep Modern Tech Gradient */
+        background: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 0%, hsla(225,39%,10%,1) 0, transparent 50%), 
+                    #020617;
+        color: #f8fafc;
+        min-height: 100vh;
+    }
+
+    .analytics-header {
+        padding: 2rem 0;
+    }
+
+    .analytics-card {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 24px;
+        height: 320px;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .analytics-card:hover {
+        border-color: rgba(139, 92, 246, 0.5);
+        transform: translateY(-5px);
+    }
+
+    .analytics-card h6 {
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .analytics-card h6::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: var(--accent-purple);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-purple);
+    }
+
+    canvas {
+        max-height: 220px !important;
+    }
+
+    /* Custom Scrollbar for modern look */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #020617; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+</style>
+
+<div class="container py-4">
+    <div class="analytics-header">
+        <h2 class="fw-bold mb-1">Intelligence Hub</h2>
+        <p class="text-white">Real-time order metrics and status distribution</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+            <div class="analytics-card">
+                <h6><i class="fas fa-chart-bar"></i> Status Volume</h6>
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="analytics-card">
+                <h6><i class="fas fa-chart-pie"></i> Distribution Ratio</h6>
+                <canvas id="doughnutChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+            <div class="analytics-card">
+                <h6><i class="fas fa-circle-notch"></i> Breakdown</h6>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-lg-4 col-md-6">
+            <div class="analytics-card">
+                <h6><i class="fas fa-line-chart"></i> Growth Vector</h6>
+                <canvas id="lineChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="analytics-card">
+                <h6><i class="fas fa-area-chart"></i> Density Area</h6>
+                <canvas id="areaChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+            <div class="analytics-card">
+                <h6><i class="fas fa-align-left"></i> Daily Velocity</h6>
+                <canvas id="ordersBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="status-data" type="application/json">{{ status_data|safe }}</script>
+<script id="orders-data" type="application/json">{{ orders_per_day|safe }}</script>
+
+<script>
+const statusData = JSON.parse(document.getElementById('status-data').textContent);
+const ordersData = JSON.parse(document.getElementById('orders-data').textContent);
+
+const statusLabels = statusData.map(x => x.status);
+const statusCounts = statusData.map(x => x.count);
+
+const orderDates = ordersData.map(x => x.date);
+const orderCounts = ordersData.map(x => x.count);
+
+// Modern Color Palette
+const colors = {
+    purple: '#8b5cf6',
+    cyan: '#06b6d4',
+    rose: '#f43f5e',
+    amber: '#fbbf24',
+    bg: 'rgba(139, 92, 246, 0.2)'
+};
+
+const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'bottom',
+            labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } }
+        }
+    },
+    scales: {
+        x: { ticks: { color: '#64748b' }, grid: { display: false } },
+        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+    }
+};
+
+/* STATUS BAR */
+new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+        labels: statusLabels,
+        datasets: [{
+            label: 'Orders',
+            data: statusCounts,
+            backgroundColor: colors.purple,
+            borderRadius: 8
+        }]
+    },
+    options: commonOptions
+});
+
+/* STATUS DOUGHNUT */
+new Chart(document.getElementById('doughnutChart'), {
+    type: 'doughnut',
+    data: {
+        labels: statusLabels,
+        datasets: [{
+            data: statusCounts,
+            backgroundColor: [colors.purple, colors.cyan, colors.rose, colors.amber],
+            borderWidth: 0,
+            hoverOffset: 20
+        }]
+    },
+    options: { ...commonOptions, cutout: '75%' }
+});
+
+/* STATUS PIE */
+new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: {
+        labels: statusLabels,
+        datasets: [{
+            data: statusCounts,
+            backgroundColor: [colors.purple, colors.cyan, colors.rose, colors.amber],
+            borderWidth: 0
+        }]
+    },
+    options: commonOptions
+});
+
+/* ORDERS LINE */
+new Chart(document.getElementById('lineChart'), {
+    type: 'line',
+    data: {
+        labels: orderDates,
+        datasets: [{
+            label: 'Orders',
+            data: orderCounts,
+            borderColor: colors.cyan,
+            borderWidth: 3,
+            pointBackgroundColor: colors.cyan,
+            tension: 0.4
+        }]
+    },
+    options: commonOptions
+});
+
+/* ORDERS AREA */
+new Chart(document.getElementById('areaChart'), {
+    type: 'line',
+    data: {
+        labels: orderDates,
+        datasets: [{
+            label: 'Orders',
+            data: orderCounts,
+            fill: true,
+            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+            borderColor: colors.cyan,
+            tension: 0.4
+        }]
+    },
+    options: commonOptions
+});
+
+/* ORDERS BAR */
+new Chart(document.getElementById('ordersBarChart'), {
+    type: 'bar',
+    data: {
+        labels: orderDates,
+        datasets: [{
+            label: 'Daily Count',
+            data: orderCounts,
+            backgroundColor: colors.rose,
+            borderRadius: 5
+        }]
+    },
+    options: commonOptions
+});
+</script>
+
+{% endblock %}

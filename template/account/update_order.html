@@ -1,0 +1,39 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow" style="width: 100%;">
+                <div class="card-body">
+
+                    <h5 class="card-title text-center mb-3">Update Order</h5>
+
+                    <!-- Order Info -->
+                    <div class="mb-3 text-center">
+                        <p class="mb-1"><strong>Order ID:</strong> {{ orders.id }}</p>
+                        <p class="mb-0"><strong>Customer:</strong> {{ orders.customer.name }}</p>
+                    </div>
+
+                    <hr>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                Update
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

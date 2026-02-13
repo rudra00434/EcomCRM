@@ -1,0 +1,203 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --crm-bg: #f8fafc;
+        --accent-color: #4f46e5; /* Indigo accent */
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--crm-bg);
+    }
+
+    /* Page Header */
+    .customer-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 2.5rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Grid Layout */
+    .customer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Individual Customer Card */
+    .user-card {
+        background: white;
+        border-radius: 24px;
+        padding: 1.5rem;
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        border-color: var(--accent-color);
+    }
+
+    /* Avatar Logic */
+    .avatar-wrapper {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Contact Detail Styling */
+    .detail-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .detail-icon {
+        width: 32px;
+        height: 32px;
+        background: #f1f5f9;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-color);
+    }
+
+    .status-pill {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 4px 12px;
+        background: #ecfdf5;
+        color: #059669;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem;
+        background: white;
+        border-radius: 24px;
+        border: 2px dashed #e2e8f0;
+    }
+
+    .avatar-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 2px solid #e2e8f0;
+}
+ .avatar-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    padding: 4px;   /* border glow space */
+    background: linear-gradient(135deg,#6366f1,#ec4899);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.avatar-img:hover {
+    transform: scale(1.05);
+    transition: 0.3s ease;
+}
+
+
+</style>
+
+<div class="container py-5">
+    
+    <div class="customer-header d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold mb-1 text-dark">Customer Directory</h3>
+            <p class="text-muted mb-0">You have {{ customers|length }} registered clients in your database.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-light border-0 shadow-sm rounded-3 px-3">
+                <i class="fas fa-filter text-muted me-2"></i> Filter
+            </button>
+            </div>
+    </div>
+
+    <div class="customer-grid">
+        {% for i in customers %}
+        <div class="user-card shadow-sm">
+            <span class="status-pill">Active</span>
+            
+            {% if i.profile_image %}
+            <img src="{{ i.profile_image.url }}" class="avatar-img">
+            {% else %}
+            <div class="avatar-wrapper">
+             {{ i.name|slice:":1"|upper }}
+             </div>
+             {% endif %}
+
+
+            <h5 class="fw-bold text-dark mb-1">{{ i.name }}</h5>
+            <p class="text-muted small mb-3">Verified Customer</p>
+
+            <hr class="opacity-10">
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    <i class="fas fa-phone-alt fa-xs"></i>
+                </div>
+                <div>
+                    <span class="d-block text-xs text-uppercase fw-bold opacity-50" style="font-size: 0.65rem;">Mobile</span>
+                    <span class="fw-medium">{{ i.phone }}</span>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    <i class="fas fa-envelope fa-xs"></i>
+                </div>
+                <div class="text-truncate">
+                    <span class="d-block text-xs text-uppercase fw-bold opacity-50" style="font-size: 0.65rem;">Email Address</span>
+                    <span class="fw-medium">{{ i.email }}</span>
+                </div>
+            </div>
+            
+            </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-users-slash fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No customers found in the system.</h5>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,427 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
+<style>
+:root {
+    --glass: rgba(255, 255, 255, 0.18);
+    --glass-border: rgba(255, 255, 255, 0.35);
+    --primary-glow: #818cf8;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: radial-gradient(circle at top left, #1e3a8a, #0f172a 60%, #020617);
+    background-attachment: fixed;
+    color: #f8fafc;
+    min-height: 100vh;
+}
+
+/* Glass Effect Cards */
+.profile-card {
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.18),
+        rgba(255,255,255,0.05)
+    );
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+}
+
+.profile-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 25px 60px rgba(99,102,241,0.25);
+}
+
+/* Avatar Circle */
+.avatar-circle {
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+}
+
+/* Buttons */
+.btn-update {
+    background: linear-gradient(135deg,#6366f1,#8b5cf6);
+    border: none;
+    color: white;
+}
+.btn-update:hover {
+    background: linear-gradient(135deg,#4f46e5,#7c3aed);
+}
+
+.btn-delete {
+    background: rgba(239,68,68,0.2);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+}
+.btn-delete:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* Table Container */
+.table-container {
+    background: linear-gradient(
+        145deg,
+        rgba(30,41,59,0.95),
+        rgba(15,23,42,0.95)
+    );
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.15);
+    overflow: hidden;
+    margin-top: 2rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* HEADER */
+.custom-table thead th {
+    background: linear-gradient(135deg,#1e3a8a,#1e293b);
+    color: #e2e8f0;
+    font-weight: 700;
+    padding: 1.25rem;
+}
+
+/* ROWS */
+.custom-table tbody tr {
+    background: rgba(15,23,42,0.8);
+    transition: all 0.2s ease;
+}
+
+.custom-table tbody tr:hover {
+    background: rgba(99,102,241,0.25);
+}
+
+/* CELLS */
+.custom-table tbody td {
+    color: #f8fafc;
+    font-weight: 500;
+    padding: 1.25rem;
+}
+
+
+/* Search Panel */
+.search-panel {
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.15),
+        rgba(255,255,255,0.05)
+    );
+    border-radius: 16px;
+    padding: 1rem;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+/* FORCE DARK TABLE BODY */
+.table.custom-table tbody tr {
+    background-color: #0f172a ;
+}
+
+.table.custom-table tbody td {
+    color: #f8fafc ;
+    background-color: #0f172a ;
+    border-color: rgba(255,255,255,0.05) ;
+}
+
+/* HOVER */
+.table.custom-table tbody tr:hover td {
+    background-color: #1e293b ;
+}
+
+/* CATEGORY BADGE FIX */
+.table.custom-table .badge {
+    background-color: rgba(255,255,255,0.15);
+    color: #e5e7eb ;
+}
+.loyalty-label {
+    color: #e2e8f0 ;   /* bright light gray */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+/* FILTER PANEL IMPROVEMENT */
+.search-panel form {
+    width: 100%;
+    gap: 12px;
+}
+
+.search-panel label {
+    font-size: 0.8rem;
+    color: #cbd5f5;
+    margin-right: 6px;
+    white-space: nowrap;
+}
+
+.search-panel select,
+.search-panel input {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #e5e7eb;
+    border-radius: 10px;
+    padding: 6px 10px;
+    height: 38px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.search-panel select:focus,
+.search-panel input:focus {
+    border-color: #818cf8;
+    box-shadow: 0 0 0 2px rgba(129,140,248,0.25);
+}
+
+.search-panel .btn {
+    height: 40px;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0 20px;
+    white-space: nowrap;
+}
+
+.search-panel .d-flex {
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .search-panel form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-panel .btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+.avatar-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;      /* MOST IMPORTANT */
+    object-position: center; /* keeps face centered */
+    display: block;
+}
+.avatar-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    padding: 4px;   /* border glow space */
+    background: linear-gradient(135deg,#6366f1,#ec4899);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.avatar-img:hover {
+    transform: scale(1.05);
+    transition: 0.3s ease;
+}
+#map {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+
+</style>
+
+
+<div class="container py-5">
+    
+    <div class="row g-4">
+        
+        <div class="col-md-4">
+            <div class="profile-card h-100 shadow-lg">
+                {% if customer.profile_image %}
+                <div class="avatar-circle p-1">
+               <img src="{{ customer.profile_image.url }}" class="avatar-img">
+               </div>
+               {% else %}
+               <div class="avatar-circle">
+               {{ customer.name|slice:":1"|upper }}
+               </div>
+               {% endif %}
+
+                <h4 class="fw-bold mb-1">{{ customer.name }}</h4>
+                <p class="text-muted small mb-4"><strong>Customer ID: {{ customer.id }}</strong></p>
+                <div class="d-grid gap-2">
+
+             <a class="btn btn-primary shadow-sm" href="{% url 'create_order' customer.id %}">
+             <i class="fas fa-cart-plus me-2"></i>Place Order
+             </a>
+
+             <a class="btn btn-update btn-action shadow-sm" href="{% url 'update_customer' customer.id %}">
+              <i class="fas fa-user-edit me-2"></i>Edit Profile
+             </a>
+
+            <a class="btn btn-delete btn-action" href="{% url 'delete_customer' customer.id %}">
+             <i class="fas fa-trash-alt me-2"></i>Remove Account
+             </a>
+
+            </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="profile-card h-100">
+                <h6 class="text-uppercase text-primary fw-bold small mb-4">Contact Details</h6>
+                <div class="mb-3">
+                    <label class="text-muted small d-block">Email Address</label>
+                    <span class="fw-semibold">{{ customer.email }}</span>
+                </div>
+                <div class="mb-0">
+                    <label class="text-muted small d-block">Phone Number</label>
+                    <span class="fw-semibold">{{ customer.phone }}</span>
+                </div>
+                <hr class="my-4 opacity-10">
+                <div class="text-center">
+                    <i class="fas fa-envelope-open-text fa-3x opacity-20"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="profile-card h-100 text-center">
+                <h6 class="text-uppercase text-warning fw-bold small mb-3">Loyalty Stats</h6>
+                <p class="text-uppercase text-warning fw-bold small mb-3 loyalty-label">Total Orders Placed: {{ total_orders }}</p>
+                <div class="order-count my-2">{{ total_orders }}</div>
+                <div class="mt-3">
+                    <span class="badge rounded-pill bg-success bg-opacity-10 text-success p-2 px-3 border border-success border-opacity-25">
+                        <i class="fas fa-star me-1"></i> Active Member
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+    <div class="col-12">
+        <div class="profile-card">
+            <h6 class="fw-bold mb-3">
+                <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                Customer Location
+            </h6>
+            <div id="map" style="height:400px; border-radius:16px;"></div>
+        </div>
+    </div>
+  </div>
+
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="search-panel d-flex align-items-center justify-content-between shadow-sm">
+                <form method="get" class="d-flex align-items-center flex-wrap w-100">
+                   <span class="text-muted me-3"><i class="fas fa-search"></i></span>
+
+                       {% for field in myFilter.form %}
+                       <div class="d-flex align-items-center">
+                       {{ field.label_tag }} 
+                         {{ field }}
+                    </div>
+                {% endfor %}
+
+                <button class="btn btn-primary ms-auto fw-bold" type="submit">
+                 Filter Results
+                </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container shadow-2xl">
+        <div class="p-4 border-bottom border-white border-opacity-10 d-flex justify-content-between align-items-center">
+            <h5 class="m-0 fw-bold"><i class="fas fa-box-open me-2 text-info"></i>Order History</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th>Product Details</th>
+                        <th>Category</th>
+                        <th>Date Ordered</th>
+                        <th>Status</th>
+                        <th class="text-center">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td class="fw-bold text-white">{{ order.product }}</td>
+                        <td>
+                            <span class="badge bg-secondary bg-opacity-25 text-white-50 fw-normal">
+                                {{ order.product.category }}
+                            </span>
+                        </td>
+                        <td><small>{{ order.date_created }}</small></td>
+                        <td>
+                            <span class="badge 
+                                {% if order.status == 'Delivered' %} bg-success 
+                                {% elif order.status == 'Pending' %} bg-warning text-dark 
+                                {% else %} bg-info {% endif %} rounded-pill px-3">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <a class="btn btn-sm btn-outline-light border-opacity-25 me-1" href="{% url 'update_order' order.id %}">
+                                    <i class="fas fa-pencil-alt text-info"></i>
+                                </a>
+                                <a class="btn btn-sm btn-outline-light border-opacity-25" href="{% url 'delete_order' order.id %}">
+                                    <i class="fas fa-trash-alt text-danger"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+var lat = {{ customer.latitude|default:"20.5937" }};
+var lng = {{ customer.longitude|default:"78.9629" }};
+
+// Initialize Map (closer zoom)
+var map = L.map('map').setView([lat, lng], 14);
+
+// Tile Layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
+
+// PREMIUM CUSTOM ICON
+var premiumIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconSize: [38, 38],
+    iconAnchor: [19, 38],
+    popupAnchor: [0, -35]
+});
+
+// PREMIUM MARKER
+var marker = L.marker([lat, lng], {icon: premiumIcon}).addTo(map);
+
+// PREMIUM POPUP
+marker.bindPopup(
+    "<b style='font-size:16px;'>{{ customer.name }}</b><br>" +
+    "<span style='color:#6366f1;'>Customer Location</span>"
+).openPopup();
+</script>
+
+{% endblock %} 

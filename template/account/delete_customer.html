@@ -1,0 +1,16 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<br>
+<div class="card">
+    <div class="card-body">
+        <p>Are you sure you want to delete this customer?</p>
+        <form action="{% url 'delete_customer' customers.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+            <input class="btn btn-danger" type="submit" name="Confirm">
+        <h5 class="card-title mt-3">Customer ID: {{ customers.id }}</h5>
+        <p class="card-text">Customer: {{ customers.name }} </p>
+</div>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --order-bg: #f8fafc;
+        --accent-indigo: #6366f1;
+        --accent-amber: #f59e0b;
+        --accent-emerald: #10b981;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        /* Dynamic background like your images */
+        background: radial-gradient(at 0% 0%, hsla(197,91%,55%,1) 0, transparent 50%), 
+                    radial-gradient(at 100% 100%, hsla(264,82%,60%,1) 0, transparent 50%),
+                    #3b82f6;
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem 2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    /* FIX: GRID ALIGNMENT */
+    .order-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        align-items: stretch; /* Ensures cards in the same row are equal height */
+    }
+
+    /* FIX: CARD SIZING */
+    .order-item-card {
+        background: white;
+        border-radius: 24px;
+        padding: 1.5rem;
+        border: 1px solid transparent;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column; /* Allows content to push footer down */
+        height: 100%; /* Force cards to fill grid cell height */
+    }
+
+    .order-item-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        border-color: var(--accent-indigo);
+    }
+
+    .status-badge {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 6px 14px;
+        border-radius: 12px;
+        align-self: flex-start; /* Keeps it on the left */
+        margin-bottom: 1rem;
+    }
+
+    .status-delivered { background: #dcfce7; color: #166534; }
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-out { background: #e0f2fe; color: #075985; }
+
+    .order-img-container {
+        height: 140px;
+        width: 100%;
+        border-radius: 16px;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    /* Pushes action bar to the very bottom */
+    .card-footer-actions {
+        margin-top: auto; 
+        padding-top: 1.25rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+
+    .action-btn {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+</style>
+
+<div class="container py-5">
+
+    <div class="page-header d-flex justify-content-between align-items-center shadow-sm">
+        <div>
+            <h3 class="fw-bold mb-1 text-dark">Order Management</h3>
+            <p class="text-muted mb-0 small">Tracking {{ orders|length }} active shipments</p>
+        </div>
+        <a href="{% url 'create_orders' %}" class="btn btn-primary px-4 py-2 rounded-3 fw-bold shadow-sm">
+            <i class="fas fa-plus-circle me-2"></i> New Order
+        </a>
+    </div>
+
+    <div class="order-grid">
+        {% for order in orders %}
+        <div class="order-item-card shadow-lg">
+            
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="status-badge 
+                    {% if order.status == 'Delivered' %} status-delivered
+                    {% elif order.status == 'Pending' %} status-pending
+                    {% else %} status-out {% endif %}">
+                    {{ order.status }}
+                </span>
+            </div>
+
+            <div class="order-img-container">
+                {% if order.product.pic %}
+                    <img src="{{ order.product.pic.url }}" alt="{{ order.product.name }}" style="max-height: 90%; max-width: 90%; object-fit: contain;">
+                {% else %}
+                    <i class="fas fa-box fa-3x text-light"></i>
+                {% endif %}
+            </div>
+
+            <h5 class="fw-bold text-dark mb-1">{{ order.product }}</h5>
+            <div class="text-muted mb-3" style="font-size: 0.75rem;">
+                <i class="far fa-calendar-alt me-1"></i> {{ order.date_created|date:"M d, Y" }}
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-muted fw-bold" style="font-size: 0.6rem; text-transform: uppercase;">Shipment Progress</span>
+                    <span class="fw-bold" style="font-size: 0.65rem; color: var(--accent-indigo);">
+                        {% if order.status == 'Pending' %} 30% {% elif order.status == 'Out for Delivery' %} 75% {% else %} 100% {% endif %}
+                    </span>
+                </div>
+                <div class="progress" style="height: 6px; border-radius: 10px; background: #f1f5f9;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated 
+                        {% if order.status == 'Delivered' %} bg-success 
+                        {% elif order.status == 'Pending' %} bg-warning 
+                        {% else %} bg-info {% endif %}" 
+                        style="width: {% if order.status == 'Pending' %} 30% {% elif order.status == 'Out for Delivery' %} 75% {% else %} 100% {% endif %}; border-radius: 10px;">
+                    </div>
+                </div>
+            </div>
+
+        <div class="mt-2">
+           <div class="d-flex align-items-start text-muted small">
+           <i class="fas fa-user-circle mt-1 me-2 text-primary" style="font-size: 0.9rem;"></i>
+           <div class="d-flex flex-column">
+            <span class="fw-bold text-dark" style="font-size: 0.85rem;">
+                {{ order.customer.name }}
+            </span>
+            <span class="text-muted" style="font-size: 0.75rem;">
+                <i class="fas fa-phone-alt me-1" style="font-size: 0.65rem;"></i> 
+                {{ order.customer.phone }}
+            </span>
+          </div>
+         </div>
+    </div>
+
+            <div class="card-footer-actions">
+                <a href="{% url 'update_order' order.id %}" class="action-btn text-primary">
+                    <i class="fas fa-edit me-1"></i> Edit
+                </a>
+                <a href="{% url 'delete_order' order.id %}" class="action-btn text-danger">
+                    <i class="fas fa-times-circle me-1"></i> Cancel
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="bg-white p-5 rounded-4 border border-dashed">
+                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No orders found.</h5>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

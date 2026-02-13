@@ -1,0 +1,139 @@
+/* ---------- BODY BACKGROUND ---------- */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1fd1f9, #b621fe);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- MAIN WRAPPER ---------- */
+.main-wrapper {
+    flex: 1;
+}
+
+/* ---------- GLASS CARDS ---------- */
+.card, .content-card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 25px;
+    transition: 0.3s ease;
+}
+
+.card:hover, .content-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: 0.25s;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+/* ---------- TABLE ---------- */
+.table {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.table th {
+    background: rgba(0,0,0,0.7);
+    color: white;
+}
+
+/* ---------- NAVBAR GLASS ---------- */
+.navbar {
+    background: rgba(0,0,0,0.25) !important;
+    backdrop-filter: blur(12px);
+    padding: 12px 30px;
+}
+
+.site-footer {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #fff;
+    margin-top: 40px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+    padding: 40px 60px;
+}
+
+.footer-brand h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.footer-brand p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.footer-links a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: 8px;
+    font-size: 14px;
+    opacity: 0.85;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    opacity: 1;
+    padding-left: 5px;
+}
+
+.footer-contact p {
+    font-size: 14px;
+    margin-bottom: 8px;
+    opacity: 0.9;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 15px;
+    background: rgba(0,0,0,0.2);
+    font-size: 14px;
+}
+.site-footer {
+    background: linear-gradient(135deg, #2b4d8c, #1f3561);
+    color: #fff;
+}
+
+.site-footer a {
+    color: #cfd8ff;
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    color: #ffffff;
+}
+
+.footer-bottom {
+    background: rgba(0,0,0,0.15);
+    font-size: 14px;
+}
