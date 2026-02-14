@@ -4,7 +4,7 @@ A powerful Full-Stack CRM solution tailored for E-commerce management.
 
 EcomCRM is a comprehensive management system designed to bridge the gap between customer relationship management and e-commerce operations. It allows businesses to track customer interactions, manage sales pipelines, and analyze purchasing patterns all in one centralized dashboard.
 
-✨ Key Features
+# ✨ Key Features
 Customer Lifecycle Management: Track leads, active customers, and churned users.
 
 Order Integration: Seamlessly link sales data to customer profiles.
@@ -15,16 +15,21 @@ Task Tracking: Built-in system for sales teams to manage follow-ups and tickets.
 
 Role-Based Access: Secure login with different permissions for Staff and Admins.
 
-🛠️ Tech Stack
-Backend: Django (Python)
+# Customer RelationShip Management System :
+1) EcomCRM the customer relationship management system is capable of keeping the record of overall daily basis record of profit and Revenue
+2) The CRM have digital analytics dashboard for per day order and customer management
+3) Implemented the feature of CSV data import of any excel data of buisness
 
-Frontend: HTML5, CSS3, JavaScript (Bootstrap/Tailwind)
+# 🛠️ Tech Stack
+Backend: Django (Python) and Django-filters
 
-Database: PostgreSQL (Production) / SQLite (Development)
+Frontend: HTML5, CSS3, JavaScript , BootStrap 5 , Chart.js
+
+Database: SQLite with Django ORM (Development)
 
 Tools: Django Crispy Forms, Environment Variables (python-dotenv)
 
-🚀 Getting Started
+# 🚀 Getting Started
 Prerequisites
 Python 3.8+
 
