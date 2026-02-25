@@ -29,6 +29,11 @@ Database: SQLite with Django ORM (Development)
 
 Tools: Django Crispy Forms, Environment Variables (python-dotenv)
 
+## System Architecture 
+
+<img width="1527" height="1556" alt="diagram-export-2-25-2026-12_03_01-PM" src="https://github.com/user-attachments/assets/71ebe104-3e26-4f48-ab71-520129c17d82" />
+
+
 # 🚀 Getting Started
 Prerequisites
 Python 3.8+
