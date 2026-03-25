@@ -1,203 +1,324 @@
 {% extends 'main.html' %}
 {% block content %}
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
-    :root {
-        --crm-bg: #f8fafc;
-        --accent-color: #4f46e5; /* Indigo accent */
-        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-
-    body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: var(--crm-bg);
-    }
-
-    /* Page Header */
-    .customer-header {
-        background: white;
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: var(--card-shadow);
-        margin-bottom: 2.5rem;
-        border: 1px solid #e2e8f0;
-    }
-
-    /* Grid Layout */
-    .customer-grid {
+    .directory-shell {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1.5rem;
     }
 
-    /* Individual Customer Card */
-    .user-card {
-        background: white;
-        border-radius: 24px;
-        padding: 1.5rem;
-        border: 1px solid #f1f5f9;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
+    .directory-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
     }
 
-    .user-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        border-color: var(--accent-color);
+    .summary-grid,
+    .customer-grid {
+        display: grid;
+        gap: 1rem;
     }
 
-    /* Avatar Logic */
-    .avatar-wrapper {
-        width: 50px;
-        height: 50px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    .summary-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .customer-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .summary-card,
+    .directory-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .summary-card {
+        padding: 1.35rem;
+    }
+
+    .summary-card small {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .summary-card strong {
+        display: block;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 0.35rem;
+    }
+
+    .summary-card p {
+        margin: 0;
+        color: var(--ink-500);
+    }
+
+    .directory-card {
+        padding: 1.4rem;
+        transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+    }
+
+    .directory-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: rgba(15, 118, 110, 0.18);
+    }
+
+    .card-header-row,
+    .card-footer-row,
+    .detail-line {
         display: flex;
         align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 1.2rem;
+    }
+
+    .card-header-row,
+    .card-footer-row {
+        justify-content: space-between;
+        gap: 0.85rem;
+    }
+
+    .card-header-row {
         margin-bottom: 1rem;
     }
 
-    /* Contact Detail Styling */
-    .detail-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 10px;
-        color: #64748b;
-        font-size: 0.9rem;
-    }
-
-    .detail-icon {
-        width: 32px;
-        height: 32px;
-        background: #f1f5f9;
-        border-radius: 8px;
+    .avatar-shell {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #0f766e, #2563eb);
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+        overflow: hidden;
+        color: #fff;
+        font-weight: 800;
+        font-size: 1.35rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--accent-color);
+        flex-shrink: 0;
     }
 
-    .status-pill {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        padding: 4px 12px;
-        background: #ecfdf5;
-        color: #059669;
-        border-radius: 50px;
-        font-size: 0.7rem;
-        font-weight: 700;
+    .avatar-shell img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(15, 118, 110, 0.12);
+        color: var(--primary);
+        font-weight: 800;
+        font-size: 0.76rem;
         text-transform: uppercase;
+        letter-spacing: 0.08em;
     }
 
-    /* Empty State */
-    .empty-state {
+    .status-chip::before {
+        content: '';
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--primary);
+    }
+
+    .customer-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin-bottom: 0.1rem;
+    }
+
+    .customer-meta {
+        color: var(--ink-500);
+        font-size: 0.92rem;
+    }
+
+    .detail-stack {
+        display: grid;
+        gap: 0.8rem;
+        margin: 1.15rem 0 1.3rem;
+    }
+
+    .detail-line {
+        gap: 0.8rem;
+        color: var(--ink-700);
+        min-width: 0;
+    }
+
+    .detail-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 16px;
+        background: rgba(15, 118, 110, 0.1);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .detail-copy {
+        min-width: 0;
+    }
+
+    .detail-copy small {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.7rem;
+        font-weight: 800;
+        margin-bottom: 0.15rem;
+    }
+
+    .detail-copy span {
+        display: block;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-footer-row {
+        border-top: 1px solid var(--line-soft);
+        padding-top: 1rem;
+    }
+
+    .joined-date {
+        color: var(--ink-500);
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+    .empty-panel {
+        padding: 3rem 1.5rem;
         text-align: center;
-        padding: 4rem;
-        background: white;
-        border-radius: 24px;
-        border: 2px dashed #e2e8f0;
     }
 
-    .avatar-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 14px;
-    object-fit: cover;
-    margin-bottom: 1rem;
-    border: 2px solid #e2e8f0;
-}
- .avatar-circle {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    padding: 4px;   /* border glow space */
-    background: linear-gradient(135deg,#6366f1,#ec4899);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.avatar-img:hover {
-    transform: scale(1.05);
-    transition: 0.3s ease;
-}
+    .empty-panel i {
+        font-size: 2.5rem;
+        color: var(--ink-500);
+        margin-bottom: 1rem;
+    }
 
-
+    @media (max-width: 992px) {
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="container py-5">
-    
-    <div class="customer-header d-flex justify-content-between align-items-center">
-        <div>
-            <h3 class="fw-bold mb-1 text-dark">Customer Directory</h3>
-            <p class="text-muted mb-0">You have {{ customers|length }} registered clients in your database.</p>
+<div class="directory-shell">
+    <section class="app-hero">
+        <span class="page-kicker">Customer Directory</span>
+        <h1 class="page-title">A cleaner front door for every relationship in your CRM.</h1>
+        <p class="page-copy">
+            Browse all customer records, open detailed profiles, and move into orders or account management
+            from one consistent workspace without changing any existing backend flow.
+        </p>
+
+        <div class="directory-toolbar">
+            <a class="btn btn-light" href="{% url 'create_customer' %}">
+                <i class="bi bi-person-plus me-2"></i>Add Customer
+            </a>
+            <a class="btn btn-outline-secondary" href="{% url 'order_list' %}">
+                <i class="bi bi-box-seam me-2"></i>Review Orders
+            </a>
         </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-light border-0 shadow-sm rounded-3 px-3">
-                <i class="fas fa-filter text-muted me-2"></i> Filter
-            </button>
-            </div>
-    </div>
+    </section>
 
-    <div class="customer-grid">
+    <section class="summary-grid">
+        <article class="summary-card">
+            <small>Registered Customers</small>
+            <strong>{{ customers|length }}</strong>
+            <p>Live profiles currently stored in your CRM database.</p>
+        </article>
+
+        <article class="summary-card">
+            <small>Directory Experience</small>
+            <strong>Fast access</strong>
+            <p>Open profiles, review order history, and manage details from one page flow.</p>
+        </article>
+
+        <article class="summary-card">
+            <small>Customer Records</small>
+            <strong>Media ready</strong>
+            <p>Profile images, contact details, and relationship history stay attached to each customer.</p>
+        </article>
+    </section>
+
+    <section class="customer-grid">
         {% for i in customers %}
-        <div class="user-card shadow-sm">
-            <span class="status-pill">Active</span>
-            
-            {% if i.profile_image %}
-            <img src="{{ i.profile_image.url }}" class="avatar-img">
-            {% else %}
-            <div class="avatar-wrapper">
-             {{ i.name|slice:":1"|upper }}
-             </div>
-             {% endif %}
-
-
-            <h5 class="fw-bold text-dark mb-1">{{ i.name }}</h5>
-            <p class="text-muted small mb-3">Verified Customer</p>
-
-            <hr class="opacity-10">
-
-            <div class="detail-row">
-                <div class="detail-icon">
-                    <i class="fas fa-phone-alt fa-xs"></i>
+        <article class="directory-card">
+            <div class="card-header-row">
+                <div class="avatar-shell">
+                    {% if i.profile_image %}
+                    <img src="{{ i.profile_image.url }}" alt="{{ i.name }}">
+                    {% else %}
+                    {{ i.name|slice:":1"|upper }}
+                    {% endif %}
                 </div>
-                <div>
-                    <span class="d-block text-xs text-uppercase fw-bold opacity-50" style="font-size: 0.65rem;">Mobile</span>
-                    <span class="fw-medium">{{ i.phone }}</span>
+                <span class="status-chip">Active</span>
+            </div>
+
+            <div>
+                <div class="customer-name">{{ i.name }}</div>
+                <div class="customer-meta">Customer ID #{{ i.id }}</div>
+            </div>
+
+            <div class="detail-stack">
+                <div class="detail-line">
+                    <div class="detail-icon"><i class="bi bi-telephone"></i></div>
+                    <div class="detail-copy">
+                        <small>Phone</small>
+                        <span>{{ i.phone }}</span>
+                    </div>
+                </div>
+
+                <div class="detail-line">
+                    <div class="detail-icon"><i class="bi bi-envelope"></i></div>
+                    <div class="detail-copy">
+                        <small>Email</small>
+                        <span>{{ i.email }}</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="detail-row">
-                <div class="detail-icon">
-                    <i class="fas fa-envelope fa-xs"></i>
-                </div>
-                <div class="text-truncate">
-                    <span class="d-block text-xs text-uppercase fw-bold opacity-50" style="font-size: 0.65rem;">Email Address</span>
-                    <span class="fw-medium">{{ i.email }}</span>
+            <div class="card-footer-row">
+                <span class="joined-date">Joined {{ i.date_created|date:"M d, Y" }}</span>
+                <div class="d-flex gap-2 flex-wrap justify-content-end">
+                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'update_customer' i.id %}">
+                        <i class="bi bi-pencil-square me-1"></i>Edit
+                    </a>
+                    <a class="btn btn-primary btn-sm" href="{% url 'customer' i.id %}">
+                        <i class="bi bi-arrow-right-circle me-1"></i>Open Profile
+                    </a>
                 </div>
             </div>
-            
-            </div>
+        </article>
         {% empty %}
-        <div class="col-12">
-            <div class="empty-state">
-                <i class="fas fa-users-slash fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">No customers found in the system.</h5>
-            </div>
+        <div class="summary-card empty-panel">
+            <i class="bi bi-people"></i>
+            <h3 class="fw-bold mb-2">No customers yet</h3>
+            <p class="mb-3 text-muted">Start building your CRM by adding the first customer profile.</p>
+            <a class="btn btn-primary" href="{% url 'create_customer' %}">Create Customer</a>
         </div>
         {% endfor %}
-    </div>
-
+    </section>
 </div>
 
 {% endblock content %}

@@ -1,36 +1,26 @@
 {% extends 'main.html' %}
-{% load static %}
-
 {% block content %}
-<br>
 
-<div class="container d-flex justify-content-center">
-    <div class="card shadow-sm" style="width: 28rem;">
-        <div class="card-body text-center">
-
-            <h5 class="card-title text-danger mb-3">
-                Import CSV File Of Tag
-            </h5>
-
-            <!-- <p class="card-text">
-                Are you sure you want to delete
-                <strong>{{ customer.name }}</strong>?
-            </p> -->
-
-            <form method="POST" class="mt-4" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="file" name="csv_file" required>
-                
-                <a class="btn btn-outline-secondary me-2" href="{% url 'tag_list' %}">
-                    Cancel
-                </a>
-
-                <button type="submit" class="btn btn-success">
-                    Confirm
-                </button>
-            </form>
-
+<div class="form-shell">
+    <div class="form-card form-card--narrow">
+        <div class="form-header">
+            <span class="eyebrow">Tag Import</span>
+            <h2>Import Tag CSV</h2>
+            <p>Upload a CSV file to create tags in bulk while keeping your current import behavior exactly the same.</p>
         </div>
+
+        <form method="POST" enctype="multipart/form-data" class="app-form">
+            {% csrf_token %}
+            <div class="field-row">
+                <label for="csv_file">CSV file</label>
+                <input type="file" id="csv_file" name="csv_file" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Import CSV</button>
+                <a href="{% url 'tag_list' %}" class="btn btn-light">Back to Tags</a>
+            </div>
+        </form>
     </div>
 </div>
 

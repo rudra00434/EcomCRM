@@ -1,18 +1,29 @@
 from multiprocessing import context
+from datetime import date
 import json
 from pickle import GET 
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render,redirect
 from .models import Customer,Tag,Product,order
 from .forms import OrderForm,updateOrderForm,CustomerForm,ProductForm
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
 from .filters import OrderFilter
 import csv
 from .forms import createUserForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+
+from .ai_assistant import (
+    clear_chat_history,
+    generate_ai_chat_response,
+    get_ask_ai_page_context,
+    get_chat_history,
+    save_chat_history,
+)
 
 def registerpage(request):
     if request.user.is_authenticated:
@@ -205,7 +216,7 @@ def update_customer(request,pk):
     customers=Customer.objects.get(id=pk)
     form=CustomerForm(instance=customers)
     if request.method=='POST':
-        form=CustomerForm(request.POST,instance=customers)
+        form=CustomerForm(request.POST, request.FILES, instance=customers)
         if form.is_valid():
             form.save()
             return redirect('/')
@@ -226,7 +237,7 @@ def update_product(request,pk):
     products=Product.objects.get(id=pk)
     form=ProductForm(instance=products)
     if request.method=='POST':
-        form=ProductForm(request.POST,instance=products)
+        form=ProductForm(request.POST, request.FILES, instance=products)
         if form.is_valid():
             form.save()
             return redirect('/')
@@ -278,6 +289,79 @@ def analytics(request):
 
     return render(request, 'account/analytics.html', context)
 
+
+@login_required(login_url='login')
+def revenue(request):
+    today = timezone.localdate()
+    start_of_year = date(today.year, 1, 1)
+    days_elapsed = (today - start_of_year).days + 1
+
+    delivered_orders = order.objects.filter(
+        status='Delivered',
+        product__price__isnull=False,
+        date_created__year=today.year,
+    )
+
+    daily_revenue_queryset = (
+        delivered_orders
+        .annotate(date=TruncDate('date_created'))
+        .values('date')
+        .annotate(
+            revenue=Sum('product__price'),
+            orders=Count('id'),
+        )
+        .order_by('date')
+    )
+
+    daily_revenue_rows = [
+        {
+            'date': item['date'],
+            'revenue': float(item['revenue'] or 0),
+            'orders': item['orders'],
+        }
+        for item in daily_revenue_queryset
+    ]
+
+    ytd_realized_revenue = sum(item['revenue'] for item in daily_revenue_rows)
+    average_daily_revenue = ytd_realized_revenue / days_elapsed if days_elapsed else 0
+    projected_annual_revenue = average_daily_revenue * 365
+    remaining_projection = projected_annual_revenue - ytd_realized_revenue
+
+    pipeline_revenue = (
+        order.objects.filter(
+            status__in=['Pending', 'Out for delivery'],
+            product__price__isnull=False,
+        ).aggregate(total=Sum('product__price'))['total'] or 0
+    )
+
+    best_revenue_day = max(daily_revenue_rows, key=lambda item: item['revenue'], default=None)
+
+    revenue_chart_data = [
+        {
+            'date': item['date'].isoformat(),
+            'revenue': item['revenue'],
+            'orders': item['orders'],
+        }
+        for item in daily_revenue_rows
+    ]
+
+    context = {
+        'today': today,
+        'current_year': today.year,
+        'days_elapsed': days_elapsed,
+        'daily_revenue_rows': daily_revenue_rows,
+        'revenue_chart_data': json.dumps(revenue_chart_data),
+        'ytd_realized_revenue': ytd_realized_revenue,
+        'average_daily_revenue': average_daily_revenue,
+        'projected_annual_revenue': projected_annual_revenue,
+        'remaining_projection': remaining_projection,
+        'pipeline_revenue': float(pipeline_revenue),
+        'best_revenue_day': best_revenue_day,
+        'delivered_orders_count': delivered_orders.count(),
+    }
+
+    return render(request, 'account/revenue.html', context)
+
 @login_required(login_url='login')
 def tag_list(request):
     tags=Tag.objects.all()
@@ -300,5 +384,110 @@ def import_tag_csv(request):
         return redirect('tag_list')
     
     return render(request,'account/managing_tag.html')
+
+
+@login_required(login_url='login')
+def about_page(request):
+    context = {
+        'platform_pillars': [
+            {
+                'title': 'Customer Memory',
+                'copy': 'Keep profiles, orders, and relationship history tied together so your team always has context.',
+                'url_name': 'customer_list',
+                'url_label': 'Explore Customers',
+                'icon': 'bi-people',
+            },
+            {
+                'title': 'Operational Control',
+                'copy': 'Track product inventory, tag structure, and order progress from one operational workspace.',
+                'url_name': 'order_list',
+                'url_label': 'View Orders',
+                'icon': 'bi-box-seam',
+            },
+            {
+                'title': 'Revenue Visibility',
+                'copy': 'Move from fulfillment activity into analytics and projected revenue without switching tools.',
+                'url_name': 'revenue',
+                'url_label': 'Open Revenue',
+                'icon': 'bi-graph-up-arrow',
+            },
+        ]
+    }
+    return render(request, 'account/about.html', context)
+
+
+@login_required(login_url='login')
+def contact_page(request):
+    context = {
+        'contact_methods': [
+            {
+                'eyebrow': 'Phone',
+                'value': '+91 8371817646',
+                'copy': 'Call for implementation help, workflow questions, or quick operational support.',
+                'href': 'tel:+918371817646',
+                'cta': 'Call Now',
+                'icon': 'bi-telephone',
+            },
+            {
+                'eyebrow': 'Email',
+                'value': 'rudranilgoswami2005@gmail.com',
+                'copy': 'Use email for support requests, onboarding questions, or collaboration enquiries.',
+                'href': 'mailto:rudranilgoswami2005@gmail.com',
+                'cta': 'Send Email',
+                'icon': 'bi-envelope',
+            },
+            {
+                'eyebrow': 'Location',
+                'value': 'Asansol, West Bengal, India',
+                'copy': 'Serving commerce operations with a practical product and support mindset.',
+                'href': 'https://maps.google.com/?q=Asansol,West+Bengal,India',
+                'cta': 'Open Map',
+                'icon': 'bi-geo-alt',
+            },
+        ],
+    }
+    return render(request, 'account/contact.html', context)
+
+
+@login_required(login_url='login')
+def ask_to_ai_page(request):
+    context = get_ask_ai_page_context()
+    context['ai_history'] = get_chat_history(request.session)
+    return render(request, 'account/ask_ai.html', context)
+
+
+@login_required(login_url='login')
+@require_POST
+def ask_to_ai_message(request):
+    try:
+        payload = json.loads(request.body.decode('utf-8') or '{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid request payload.'}, status=400)
+
+    message = (payload.get('message') or '').strip()
+    if not message:
+        return JsonResponse({'error': 'Please enter a message.'}, status=400)
+
+    history = get_chat_history(request.session)
+    result = generate_ai_chat_response(message, history)
+
+    updated_history = history + [
+        {'role': 'user', 'content': message},
+        {
+            'role': 'assistant',
+            'content': result['reply'],
+            'sources': result.get('sources', []),
+        },
+    ]
+    save_chat_history(request.session, updated_history)
+
+    return JsonResponse(result)
+
+
+@login_required(login_url='login')
+@require_POST
+def ask_to_ai_reset(request):
+    clear_chat_history(request.session)
+    return JsonResponse({'ok': True})
 
 

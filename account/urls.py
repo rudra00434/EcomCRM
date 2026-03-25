@@ -21,6 +21,12 @@ urlpatterns=[
     path('add_product/',views.add_product,name='add_product'),
     path('delete_product/<int:pk>/',views.delete_product,name='delete_product'),
     path('analytics/', views.analytics, name='analytics'),
+    path('revenue/', views.revenue, name='revenue'),
+    path('ask-to-ai/', views.ask_to_ai_page, name='ask_to_ai'),
+    path('ask-to-ai/message/', views.ask_to_ai_message, name='ask_to_ai_message'),
+    path('ask-to-ai/reset/', views.ask_to_ai_reset, name='ask_to_ai_reset'),
+    path('about/', views.about_page, name='about'),
+    path('contact/', views.contact_page, name='contact'),
     path('tag_list/',views.tag_list,name='tag_list'),
     path('import_tag_csv/',views.import_tag_csv,name='import_tag_csv')
     

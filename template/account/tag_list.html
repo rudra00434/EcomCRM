@@ -1,166 +1,204 @@
 {% extends 'main.html' %}
-
 {% block content %}
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <style>
-    :root {
-        --glass-bg: rgba(255, 255, 255, 0.03);
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --neon-purple: #8b5cf6;
-        --neon-blue: #3b82f6;
-    }
-
-    body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                    radial-gradient(at 100% 0%, hsla(225,39%,10%,1) 0, transparent 50%), 
-                    #020617;
-        color: #f8fafc;
-        min-height: 100vh;
-    }
-
-    .tag-header {
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--glass-border);
-        border-radius: 24px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .tag-grid {
+    .tag-shell {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 1.5rem;
     }
 
-    .tag-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid var(--glass-border);
-        border-radius: 20px;
-        padding: 1.5rem;
+    .tag-toolbar {
         display: flex;
-        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .tag-overview,
+    .tag-grid {
+        display: grid;
         gap: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
+    }
+
+    .tag-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tag-overview .content-card,
+    .tag-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .tag-overview .content-card {
+        padding: 1.35rem;
+    }
+
+    .tag-overview small {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .tag-overview strong {
+        display: block;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 0.35rem;
+    }
+
+    .tag-overview p {
+        margin: 0;
+        color: var(--ink-500);
+    }
+
+    .tag-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .tag-card {
+        padding: 1.35rem;
+        display: flex;
+        gap: 0.95rem;
+        align-items: center;
+        transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
     }
 
     .tag-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--neon-purple);
-        box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.4);
-    }
-
-    /* Animated Glow Background on Hover */
-    .tag-card::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-
-    .tag-card:hover::after {
-        opacity: 1;
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: rgba(15, 118, 110, 0.18);
     }
 
     .tag-avatar {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
-        border-radius: 14px;
+        width: 3.6rem;
+        height: 3.6rem;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #0f766e, #d97706);
+        color: #fff;
+        font-size: 1.25rem;
+        font-weight: 800;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 1.2rem;
-        color: white;
-        box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
-        z-index: 1;
+        flex-shrink: 0;
     }
 
-    .tag-info {
-        z-index: 1;
+    .tag-body {
+        min-width: 0;
     }
 
-    .tag-name {
-        font-weight: 700;
+    .tag-title {
         font-size: 1.1rem;
-        margin-bottom: 2px;
-        display: block;
+        font-weight: 800;
+        margin-bottom: 0.12rem;
     }
 
-    .tag-meta {
-        font-size: 0.75rem;
-        color: #94a3b8;
+    .tag-copy {
+        color: var(--ink-500);
+        margin-bottom: 0.45rem;
+    }
+
+    .tag-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.38rem 0.68rem;
+        border-radius: 999px;
+        background: rgba(15, 118, 110, 0.1);
+        color: var(--primary);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        letter-spacing: 1px;
     }
 
-    .btn-create-tag {
-        background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
-        border: none;
-        border-radius: 12px;
-        padding: 0.75rem 1.5rem;
-        font-weight: 700;
-        color: white;
-        transition: transform 0.2s;
+    .tag-chip::before {
+        content: '';
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--primary);
     }
 
-    .btn-create-tag:hover {
-        transform: scale(1.05);
-        color: white;
+    .empty-panel {
+        padding: 3rem 1.5rem;
+        text-align: center;
+    }
+
+    .empty-panel i {
+        font-size: 2.5rem;
+        color: var(--ink-500);
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .tag-overview {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
-<div class="container py-5">
-    
-    <div class="tag-header">
-        <div>
-            <h2 class="fw-bold mb-0"><i class="fas fa-tags me-3 text-primary"></i>Classification Hub</h2>
-            <p class="text-white mb-0 small mt-1">Manage and organize your product taxonomies</p>
-        </div>
-        <a href="{% url 'import_tag_csv' %}"
-        class="btn btn-create-tag shadow-sm">
-       <i class="fas fa-plus-circle me-2"></i>New Category
-       </a>
+<div class="tag-shell">
+    <section class="app-hero">
+        <span class="page-kicker">Catalog Tags</span>
+        <h1 class="page-title">A more professional home for your product taxonomy.</h1>
+        <p class="page-copy">
+            Keep tags organized, import them by CSV, and make catalog structure easier to scan without changing
+            any existing backend logic or tag routes.
+        </p>
 
-    </div>
-       
-    <div class="tag-grid">
-        {% for i in tags %}
-        <div class="tag-card shadow-sm">
-            <div class="tag-avatar">
-                {{ i.name|slice:":1"|upper }}
-            </div>
-            <div class="tag-info">
-                <span class="tag-name">{{ i.name }}</span>
-                <span class="tag-meta">Product Tag</span>
-            </div>
-            <i class="fas fa-hashtag position-absolute" style="right: -10px; bottom: -10px; font-size: 4rem; opacity: 0.03; transform: rotate(-15deg);"></i>
+        <div class="tag-toolbar">
+            <a class="btn btn-light" href="{% url 'import_tag_csv' %}">
+                <i class="bi bi-upload me-2"></i>Import CSV
+            </a>
+            <a class="btn btn-outline-secondary" href="{% url 'product' %}">
+                <i class="bi bi-box-seam me-2"></i>View Products
+            </a>
         </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
-            <div class="p-5 rounded-4" style="background: var(--glass-bg); border: 2px dashed var(--glass-border);">
-                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">No tags found in the hub.</h5>
+    </section>
+
+    <section class="tag-overview">
+        <article class="content-card">
+            <small>Total Tags</small>
+            <strong>{{ tags|length }}</strong>
+            <p>Classification labels currently available for your catalog and product workflows.</p>
+        </article>
+
+        <article class="content-card">
+            <small>Tag Workflow</small>
+            <strong>Import and assign</strong>
+            <p>Use CSV import for faster setup, then attach tags to products to keep the inventory organized.</p>
+        </article>
+    </section>
+
+    <section class="tag-grid">
+        {% for i in tags %}
+        <article class="tag-card">
+            <div class="tag-avatar">{{ i.name|slice:":1"|upper }}</div>
+            <div class="tag-body">
+                <div class="tag-title">{{ i.name }}</div>
+                <div class="tag-copy">Ready to group related products inside your CRM catalog.</div>
+                <span class="tag-chip">Taxonomy label</span>
             </div>
+        </article>
+        {% empty %}
+        <div class="content-card empty-panel">
+            <i class="bi bi-tags"></i>
+            <h3 class="fw-bold mb-2">No tags yet</h3>
+            <p class="mb-3 text-muted">Import a CSV or create product tags to start structuring your catalog.</p>
+            <a class="btn btn-primary" href="{% url 'import_tag_csv' %}">Import Tags</a>
         </div>
         {% endfor %}
-    </div>
+    </section>
 </div>
 
 {% endblock content %}

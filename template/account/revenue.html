@@ -1,0 +1,432 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<style>
+    .revenue-shell {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .revenue-top,
+    .metric-grid,
+    .insight-grid,
+    .bottom-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .revenue-top {
+        grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.95fr);
+    }
+
+    .metric-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .insight-grid,
+    .bottom-grid {
+        grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.95fr);
+    }
+
+    .forecast-card,
+    .metric-card,
+    .chart-card,
+    .signal-card,
+    .table-card,
+    .method-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        padding: 1.4rem;
+    }
+
+    .forecast-card {
+        background:
+            radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.88));
+    }
+
+    .forecast-card small,
+    .metric-card small,
+    .panel-kicker,
+    .method-line strong {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .forecast-value,
+    .metric-value,
+    .signal-value {
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        color: var(--ink-900);
+    }
+
+    .forecast-value {
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
+        line-height: 1;
+        margin-bottom: 0.45rem;
+    }
+
+    .metric-value {
+        font-size: 2rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .signal-value {
+        font-size: 1.45rem;
+        margin-top: 0.15rem;
+    }
+
+    .forecast-card p,
+    .metric-card p,
+    .method-card p {
+        color: var(--ink-500);
+        margin: 0;
+    }
+
+    .chart-head,
+    .table-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .chart-head h3,
+    .table-head h3 {
+        margin: 0;
+        font-weight: 800;
+    }
+
+    .chart-head p,
+    .table-head p {
+        margin: 0;
+        color: var(--ink-500);
+        max-width: 30ch;
+    }
+
+    .chart-wrap {
+        position: relative;
+        height: 340px;
+    }
+
+    .signal-stack,
+    .method-stack {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .signal-chip,
+    .method-line {
+        border-radius: 22px;
+        border: 1px solid var(--line-soft);
+        background: rgba(20, 34, 53, 0.04);
+        padding: 1rem 1.1rem;
+    }
+
+    .revenue-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .revenue-table th,
+    .revenue-table td {
+        padding: 0.95rem 0.8rem;
+        border-bottom: 1px solid var(--line-soft);
+        text-align: left;
+    }
+
+    .revenue-table th {
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.74rem;
+        font-weight: 800;
+    }
+
+    .revenue-table td:last-child,
+    .revenue-table th:last-child {
+        text-align: right;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--ink-500);
+    }
+
+    .empty-state i {
+        font-size: 2.3rem;
+        margin-bottom: 0.9rem;
+    }
+
+    @media (max-width: 1200px) {
+        .metric-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 992px) {
+        .revenue-top,
+        .insight-grid,
+        .bottom-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .metric-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="revenue-shell">
+    <section class="revenue-top">
+        <section class="app-hero">
+            <span class="page-kicker">Revenue Intelligence</span>
+            <h1 class="page-title">Daily revenue and annual projection in one cleaner executive view.</h1>
+            <p class="page-copy">
+                This page still calculates from your real delivered and pipeline orders. The difference is a more
+                polished presentation for daily tracking and year-end forecasting.
+            </p>
+        </section>
+
+        <aside class="forecast-card">
+            <small>Expected Revenue In {{ current_year }}</small>
+            <div class="forecast-value">Rs. {{ projected_annual_revenue|floatformat:2 }}</div>
+            <p class="mb-3">Projected from realized delivered revenue over {{ days_elapsed }} elapsed days this year.</p>
+            <div class="method-stack">
+                <div class="method-line">
+                    <strong>Today</strong>
+                    <div>{{ today|date:"M d, Y" }}</div>
+                </div>
+                <div class="method-line">
+                    <strong>Projection Logic</strong>
+                    <div>Year-to-date realized revenue divided by elapsed days, then annualized to 365 days.</div>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="metric-grid">
+        <article class="metric-card">
+            <small>Realized Revenue</small>
+            <div class="metric-value">Rs. {{ ytd_realized_revenue|floatformat:2 }}</div>
+            <p>Revenue from delivered orders recorded in {{ current_year }}.</p>
+        </article>
+
+        <article class="metric-card">
+            <small>Average Daily Revenue</small>
+            <div class="metric-value">Rs. {{ average_daily_revenue|floatformat:2 }}</div>
+            <p>Smoothed across {{ days_elapsed }} elapsed days.</p>
+        </article>
+
+        <article class="metric-card">
+            <small>Pending Pipeline</small>
+            <div class="metric-value">Rs. {{ pipeline_revenue|floatformat:2 }}</div>
+            <p>Pending and out-for-delivery value still in motion.</p>
+        </article>
+
+        <article class="metric-card">
+            <small>Delivered Orders</small>
+            <div class="metric-value">{{ delivered_orders_count }}</div>
+            <p>Completed orders that currently contribute to realized revenue.</p>
+        </article>
+    </section>
+
+    <section class="insight-grid">
+        <article class="chart-card">
+            <div class="chart-head">
+                <div>
+                    <span class="panel-kicker">Per Day Revenue</span>
+                    <h3>Revenue trend and delivered order count</h3>
+                </div>
+                <p>Bar and line combination for the same real daily revenue dataset.</p>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="dailyRevenueChart"></canvas>
+            </div>
+        </article>
+
+        <aside class="signal-card">
+            <span class="panel-kicker">Revenue Signals</span>
+            <h3 class="fw-bold mb-3">Quick decision support</h3>
+            <div class="signal-stack">
+                <div class="signal-chip">
+                    <small>Best Revenue Day</small>
+                    <div class="signal-value">
+                        {% if best_revenue_day %}
+                        {{ best_revenue_day.date|date:"M d, Y" }}
+                        {% else %}
+                        No data yet
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="signal-chip">
+                    <small>Revenue On Best Day</small>
+                    <div class="signal-value">
+                        {% if best_revenue_day %}
+                        Rs. {{ best_revenue_day.revenue|floatformat:2 }}
+                        {% else %}
+                        Rs. 0.00
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="signal-chip">
+                    <small>Remaining Projection</small>
+                    <div class="signal-value">Rs. {{ remaining_projection|floatformat:2 }}</div>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="bottom-grid">
+        <article class="table-card">
+            <div class="table-head">
+                <div>
+                    <span class="panel-kicker">Daily Breakdown</span>
+                    <h3>Revenue by date</h3>
+                </div>
+                <p>Every row below is generated from delivered orders in your live database.</p>
+            </div>
+
+            {% if daily_revenue_rows %}
+            <div class="table-responsive">
+                <table class="revenue-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Delivered Orders</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in daily_revenue_rows %}
+                        <tr>
+                            <td>{{ row.date|date:"M d, Y" }}</td>
+                            <td>{{ row.orders }}</td>
+                            <td>Rs. {{ row.revenue|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-bar-chart"></i>
+                <h4 class="fw-bold mb-2">No delivered revenue yet</h4>
+                <p class="mb-0">Revenue rows will appear here once delivered orders are recorded in {{ current_year }}.</p>
+            </div>
+            {% endif %}
+        </article>
+
+        <aside class="method-card">
+            <span class="panel-kicker">How To Read This Page</span>
+            <h3 class="fw-bold mb-3">Methodology and context</h3>
+            <div class="method-stack">
+                <div class="method-line">
+                    <strong>Realized revenue</strong>
+                    <div>Only delivered orders contribute to realized daily and year-to-date revenue.</div>
+                </div>
+                <div class="method-line">
+                    <strong>Pipeline revenue</strong>
+                    <div>Pending and out-for-delivery orders remain separate so realized income stays clean.</div>
+                </div>
+                <div class="method-line">
+                    <strong>Projection horizon</strong>
+                    <div>{{ current_year }} projection uses the current pace and extends it across a 365-day year.</div>
+                </div>
+            </div>
+        </aside>
+    </section>
+</div>
+
+<script id="revenue-chart-data" type="application/json">{{ revenue_chart_data|safe }}</script>
+<script>
+    const revenueSeries = JSON.parse(document.getElementById('revenue-chart-data').textContent || '[]');
+    const chartLabels = revenueSeries.map((item) => item.date);
+    const chartRevenue = revenueSeries.map((item) => item.revenue);
+    const chartOrders = revenueSeries.map((item) => item.orders);
+
+    Chart.defaults.font.family = 'Manrope, sans-serif';
+    Chart.defaults.color = '#6f8398';
+
+    new Chart(document.getElementById('dailyRevenueChart'), {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Per day revenue',
+                    data: chartRevenue,
+                    backgroundColor: 'rgba(15, 118, 110, 0.75)',
+                    borderRadius: 14,
+                    borderSkipped: false
+                },
+                {
+                    type: 'line',
+                    label: 'Delivered orders',
+                    data: chartOrders,
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                    yAxisID: 'yOrders',
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 16
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#6f8398' },
+                    grid: { display: false }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#6f8398',
+                        callback: (value) => `Rs. ${value}`
+                    },
+                    grid: { color: 'rgba(19, 34, 56, 0.08)' }
+                },
+                yOrders: {
+                    beginAtZero: true,
+                    position: 'right',
+                    ticks: {
+                        color: '#6f8398',
+                        precision: 0
+                    },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,587 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<style>
+    .ai-shell {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .ai-grid,
+    .ai-capability-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .ai-grid {
+        grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.4fr);
+    }
+
+    .ai-capability-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ai-panel,
+    .chat-panel,
+    .capability-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        padding: 1.45rem;
+    }
+
+    .ai-panel h3,
+    .chat-panel h3,
+    .capability-card h3 {
+        margin: 0 0 0.55rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .ai-panel p,
+    .chat-panel p,
+    .capability-card p {
+        color: var(--ink-500);
+        margin: 0;
+    }
+
+    .section-kicker {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .status-card {
+        border-radius: 22px;
+        background: rgba(20, 34, 53, 0.04);
+        border: 1px solid var(--line-soft);
+        padding: 1rem 1.1rem;
+        margin-top: 1rem;
+    }
+
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.42rem 0.78rem;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+    }
+
+    .status-chip::before {
+        content: '';
+        width: 0.52rem;
+        height: 0.52rem;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status-chip.online {
+        background: rgba(21, 128, 61, 0.12);
+        color: #15803d;
+    }
+
+    .status-chip.fallback {
+        background: rgba(217, 119, 6, 0.12);
+        color: #b45309;
+    }
+
+    .capability-list,
+    .suggestion-list {
+        display: grid;
+        gap: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    .capability-item,
+    .suggestion-button {
+        border-radius: 20px;
+        background: rgba(20, 34, 53, 0.04);
+        border: 1px solid var(--line-soft);
+        padding: 0.95rem 1rem;
+    }
+
+    .capability-item {
+        display: flex;
+        gap: 0.8rem;
+        align-items: flex-start;
+    }
+
+    .capability-icon {
+        width: 2.35rem;
+        height: 2.35rem;
+        border-radius: 16px;
+        background: rgba(15, 118, 110, 0.12);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .suggestion-button {
+        width: 100%;
+        text-align: left;
+        color: var(--ink-900);
+        font-weight: 700;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .suggestion-button:hover {
+        transform: translateY(-1px);
+        border-color: rgba(15, 118, 110, 0.18);
+    }
+
+    .chat-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .chat-window {
+        min-height: 520px;
+        max-height: 640px;
+        overflow-y: auto;
+        border-radius: 26px;
+        background:
+            radial-gradient(circle at top right, rgba(37, 99, 235, 0.06), transparent 30%),
+            linear-gradient(180deg, rgba(248, 250, 252, 0.92), rgba(241, 245, 249, 0.98));
+        border: 1px solid var(--line-soft);
+        padding: 1rem;
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .chat-message {
+        display: flex;
+    }
+
+    .chat-message.user {
+        justify-content: flex-end;
+    }
+
+    .chat-bubble {
+        max-width: min(720px, 88%);
+        border-radius: 24px;
+        padding: 1rem 1.1rem;
+        box-shadow: 0 10px 24px rgba(19, 34, 56, 0.07);
+        line-height: 1.65;
+        white-space: pre-wrap;
+    }
+
+    .chat-message.user .chat-bubble {
+        background: linear-gradient(135deg, #102238, #1e4962);
+        color: #f8fafc;
+        border-bottom-right-radius: 10px;
+    }
+
+    .chat-message.assistant .chat-bubble {
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid var(--line-soft);
+        color: var(--ink-900);
+        border-bottom-left-radius: 10px;
+    }
+
+    .bubble-label {
+        display: block;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+        opacity: 0.72;
+    }
+
+    .source-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        margin-top: 0.85rem;
+    }
+
+    .source-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.42rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(37, 99, 235, 0.08);
+        color: var(--info);
+        text-decoration: none;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .source-chip:hover {
+        color: var(--info);
+    }
+
+    .chat-form {
+        margin-top: 1rem;
+        display: grid;
+        gap: 0.85rem;
+    }
+
+    .chat-input-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.85rem;
+        align-items: end;
+    }
+
+    .chat-form textarea {
+        min-height: 118px;
+        resize: vertical;
+    }
+
+    .chat-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .helper-copy {
+        color: var(--ink-500);
+        font-size: 0.92rem;
+    }
+
+    .typing {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .typing span {
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 50%;
+        background: #6f8398;
+        display: inline-block;
+        animation: aiPulse 1.2s infinite ease-in-out;
+    }
+
+    .typing span:nth-child(2) {
+        animation-delay: 0.15s;
+    }
+
+    .typing span:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    @keyframes aiPulse {
+        0%, 80%, 100% { transform: scale(0.8); opacity: 0.45; }
+        40% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 1100px) {
+        .ai-grid,
+        .ai-capability-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .chat-input-row {
+            grid-template-columns: 1fr;
+        }
+
+        .chat-bubble {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="ai-shell">
+    <section class="app-hero">
+        <span class="page-kicker">ASK to AI</span>
+        <h1 class="page-title">A grounded Groq-powered assistant for your EcomCRM workspace.</h1>
+        <p class="page-copy">
+            This assistant uses a chained workflow: it extracts what you are asking for, retrieves the most relevant
+            website features and live business context, and then answers from that grounded information.
+        </p>
+    </section>
+
+    <section class="ai-grid">
+        <aside class="ai-panel">
+            <span class="section-kicker">Assistant Status</span>
+            <h3>Real website context first, answer second.</h3>
+            <p>
+                Ask about features, navigation, revenue, analytics, customers, products, orders, or media storage.
+                The assistant is designed to stay grounded in what the website actually does.
+            </p>
+
+            <div class="status-card">
+                <div class="status-chip {% if groq_available %}online{% else %}fallback{% endif %}">
+                    {% if groq_available %}Groq connected{% else %}Local fallback mode{% endif %}
+                </div>
+                <p class="mb-0">
+                    {% if groq_available %}
+                    Groq is configured. The assistant will use the model <strong>{{ chat_model }}</strong> after retrieval.
+                    {% else %}
+                    Groq is not configured yet. The assistant can still answer from local website knowledge, but full LLM responses need a <code>GROQ_API_KEY</code>.
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="capability-list">
+                {% for capability in assistant_capabilities %}
+                <div class="capability-item">
+                    <span class="capability-icon"><i class="bi bi-stars"></i></span>
+                    <div>{{ capability }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="suggestion-list">
+                {% for prompt in suggested_prompts %}
+                <button class="suggestion-button js-suggestion" type="button" data-prompt="{{ prompt }}">
+                    {{ prompt }}
+                </button>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <section class="chat-panel">
+            <div class="chat-head">
+                <div>
+                    <span class="section-kicker">Chat Window</span>
+                    <h3>Ask about the website like you would ask a teammate.</h3>
+                    <p>You can ask what pages do, how revenue works, where features live, or what the current data says.</p>
+                </div>
+                <button class="btn btn-outline-secondary" id="resetChatButton" type="button">
+                    <i class="bi bi-arrow-counterclockwise me-2"></i>Reset Chat
+                </button>
+            </div>
+
+            <div class="chat-window" id="chatWindow">
+                {% if ai_history %}
+                    {% for item in ai_history %}
+                    <div class="chat-message {{ item.role }}">
+                        <div class="chat-bubble">
+                            <span class="bubble-label">{% if item.role == 'assistant' %}ASK to AI{% else %}You{% endif %}</span>
+                            {{ item.content }}
+                            {% if item.sources %}
+                            <div class="source-wrap">
+                                {% for source in item.sources %}
+                                <a class="source-chip" href="{{ source.url }}">{{ source.title }}</a>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="chat-message assistant">
+                    <div class="chat-bubble">
+                        <span class="bubble-label">ASK to AI</span>
+                        Ask me about the website, such as:
+                        - what each page does
+                        - where to manage customers, products, or orders
+                        - how analytics and revenue are calculated
+                        - how media storage works here
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <form class="chat-form" id="chatForm">
+                {% csrf_token %}
+                <div class="chat-input-row">
+                    <div>
+                        <label for="chatMessage">Your question</label>
+                        <textarea id="chatMessage" placeholder="Example: How does this website calculate revenue, and where can I manage orders?"></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="sendButton" type="submit">
+                        <i class="bi bi-send me-2"></i>Ask to AI
+                    </button>
+                </div>
+
+                <div class="chat-actions">
+                    <span class="helper-copy">Grounded answers are built from extracted intent, retrieved website context, and then AI generation.</span>
+                </div>
+            </form>
+        </section>
+    </section>
+
+    <section class="ai-capability-grid">
+        <article class="capability-card">
+            <span class="section-kicker">Feature Extraction</span>
+            <h3>Understands what you are actually asking.</h3>
+            <p>
+                The chain extracts topics like customers, orders, analytics, revenue, navigation, support, and live
+                metric intent before it builds the answer.
+            </p>
+        </article>
+
+        <article class="capability-card">
+            <span class="section-kicker">Context Retrieval</span>
+            <h3>Answers from the website, not from guesses.</h3>
+            <p>
+                Retrieved context includes page capabilities, live counts, recent order signals, and revenue data so
+                the response stays tied to this actual product.
+            </p>
+        </article>
+    </section>
+</div>
+
+{{ suggested_prompts|json_script:"ask-ai-prompts" }}
+<script>
+    const chatWindow = document.getElementById('chatWindow');
+    const chatForm = document.getElementById('chatForm');
+    const chatMessage = document.getElementById('chatMessage');
+    const sendButton = document.getElementById('sendButton');
+    const resetChatButton = document.getElementById('resetChatButton');
+    const messageUrl = "{% url 'ask_to_ai_message' %}";
+    const resetUrl = "{% url 'ask_to_ai_reset' %}";
+
+    function getCsrfToken() {
+        const input = chatForm.querySelector('input[name=csrfmiddlewaretoken]');
+        return input ? input.value : '';
+    }
+
+    function escapeHtml(value) {
+        return value
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function appendMessage(role, content, sources = []) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `chat-message ${role}`;
+
+        const safeContent = escapeHtml(content || '').replace(/\n/g, '<br>');
+        const label = role === 'assistant' ? 'ASK to AI' : 'You';
+
+        let sourcesHtml = '';
+        if (sources.length) {
+            const chips = sources.map((source) => (
+                `<a class="source-chip" href="${source.url}">${escapeHtml(source.title)}</a>`
+            )).join('');
+            sourcesHtml = `<div class="source-wrap">${chips}</div>`;
+        }
+
+        wrapper.innerHTML = `
+            <div class="chat-bubble">
+                <span class="bubble-label">${label}</span>
+                ${safeContent}
+                ${sourcesHtml}
+            </div>
+        `;
+        chatWindow.appendChild(wrapper);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function appendTyping() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'chat-message assistant';
+        wrapper.id = 'typingBubble';
+        wrapper.innerHTML = `
+            <div class="chat-bubble">
+                <span class="bubble-label">ASK to AI</span>
+                <span class="typing"><span></span><span></span><span></span></span>
+            </div>
+        `;
+        chatWindow.appendChild(wrapper);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function removeTyping() {
+        const typingBubble = document.getElementById('typingBubble');
+        if (typingBubble) {
+            typingBubble.remove();
+        }
+    }
+
+    async function sendMessage(message) {
+        appendMessage('user', message);
+        appendTyping();
+        sendButton.disabled = true;
+        sendButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Thinking';
+
+        try {
+            const response = await fetch(messageUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
+                },
+                body: JSON.stringify({ message }),
+            });
+
+            const payload = await response.json();
+            removeTyping();
+
+            if (!response.ok) {
+                appendMessage('assistant', payload.error || 'Something went wrong while talking to the assistant.');
+                return;
+            }
+
+            appendMessage('assistant', payload.reply || 'No response was returned.', payload.sources || []);
+        } catch (error) {
+            removeTyping();
+            appendMessage('assistant', 'The assistant could not be reached right now. Please try again.');
+        } finally {
+            sendButton.disabled = false;
+            sendButton.innerHTML = '<i class="bi bi-send me-2"></i>Ask to AI';
+        }
+    }
+
+    chatForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const message = chatMessage.value.trim();
+        if (!message) {
+            return;
+        }
+
+        chatMessage.value = '';
+        await sendMessage(message);
+    });
+
+    document.querySelectorAll('.js-suggestion').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const prompt = button.getAttribute('data-prompt');
+            chatMessage.value = prompt;
+            chatMessage.focus();
+        });
+    });
+
+    resetChatButton.addEventListener('click', async () => {
+        try {
+            await fetch(resetUrl, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCsrfToken() },
+            });
+        } catch (error) {
+            // Ignore reset failures and still clear the UI.
+        }
+
+        chatWindow.innerHTML = `
+            <div class="chat-message assistant">
+                <div class="chat-bubble">
+                    <span class="bubble-label">ASK to AI</span>
+                    Chat reset. Ask a fresh question about the website whenever you are ready.
+                </div>
+            </div>
+        `;
+    });
+</script>
+
+{% endblock %}

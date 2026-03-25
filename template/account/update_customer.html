@@ -1,17 +1,23 @@
 {% extends 'main.html' %}
-{%load static %}
 {% block content %}
-<div class="row">
-    <div class="col -md-6">
-        <div class="card card-body">
-            <h5>Update Customer Form</h5>
-            <form action="" method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Submit</button>
-                
-            </form>
+
+<div class="form-shell">
+    <div class="form-card form-card--compact">
+        <div class="form-header">
+            <span class="eyebrow">Customer Edit</span>
+            <h2>Update Customer</h2>
+            <p>Edit customer identity, profile image, and location details while keeping the existing workflow untouched.</p>
         </div>
+
+        <form action="" method="POST" enctype="multipart/form-data" class="app-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Update Customer</button>
+                <a href="{% url 'customer_list' %}" class="btn btn-light">Back to Customers</a>
+            </div>
+        </form>
     </div>
 </div>
 

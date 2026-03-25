@@ -1,20 +1,53 @@
 import os
 from pathlib import Path
 
+import dj_database_url
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-TEMPLATE_DIR = os.path.join(BASE_DIR, 'template')
+load_dotenv(BASE_DIR / '.env')
+
+TEMPLATE_DIR = BASE_DIR / 'template'
+
+
+def env_flag(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def csv_env(name, default=''):
+    value = os.getenv(name, default)
+    return [item.strip() for item in value.split(',') if item.strip()]
+
+
+USE_CLOUDINARY = bool(
+    os.getenv('CLOUDINARY_URL') or (
+        os.getenv('CLOUDINARY_CLOUD_NAME')
+        and os.getenv('CLOUDINARY_API_KEY')
+        and os.getenv('CLOUDINARY_API_SECRET')
+    )
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(w*@7afqwn04hs#s*j&-t1qt=js8ik8!wv*jlv$306rf2$(8h4'
+SECRET_KEY = os.getenv(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-(w*@7afqwn04hs#s*j&-t1qt=js8ik8!wv*jlv$306rf2$(8h4',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_flag('DJANGO_DEBUG', default=True)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = csv_env('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost,.onrender.com')
+CSRF_TRUSTED_ORIGINS = csv_env(
+    'DJANGO_CSRF_TRUSTED_ORIGINS',
+    default='https://*.onrender.com',
+)
 
 
 # Application definition
@@ -29,6 +62,12 @@ INSTALLED_APPS = [
     'account',
     'django_filters',
 ]
+
+if USE_CLOUDINARY:
+    INSTALLED_APPS += [
+        'cloudinary_storage',
+        'cloudinary',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,17 +98,26 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'db.wsgi.application'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+database_url = os.getenv('DATABASE_URL')
+
+if database_url:
+    DATABASES = {
+        'default': dj_database_url.parse(database_url, conn_max_age=600, ssl_require=False),
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -108,10 +156,37 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
+if USE_CLOUDINARY:
+    STORAGES['default'] = {
+        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+    }
+    CLOUDINARY_STORAGE = {
+        'SECURE': True,
+    }
+
+    if os.getenv('CLOUDINARY_CLOUD_NAME') and os.getenv('CLOUDINARY_API_KEY') and os.getenv('CLOUDINARY_API_SECRET'):
+        CLOUDINARY_STORAGE.update(
+            {
+                'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+                'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+                'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+            }
+        )
+
+    if os.getenv('CLOUDINARY_STORAGE_PREFIX'):
+        CLOUDINARY_STORAGE['PREFIX'] = os.getenv('CLOUDINARY_STORAGE_PREFIX').strip('/')

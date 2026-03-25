@@ -1,16 +1,27 @@
 {% extends 'main.html' %}
-{% load static %}
 {% block content %}
-<br>
-<div class="card">
-    <div class="card-body">
-        <p>Are you sure you want to delete this product?</p>
+
+<div class="confirm-shell">
+    <div class="confirm-card">
+        <div class="confirm-icon">
+            <i class="fas fa-box-open"></i>
+        </div>
+        <h2>Delete Product</h2>
+        <p>This removes the selected product from the catalog. The backend behavior is unchanged; only the confirmation experience is upgraded.</p>
+
+        <div class="meta-box">
+            <p class="mb-2"><strong>Product ID</strong> {{ products.id }}</p>
+            <p class="mb-0"><strong>Name</strong> {{ products.name }}</p>
+        </div>
+
         <form action="{% url 'delete_product' products.id %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Delete</button>
-            <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
-            <input class="btn btn-danger" type="submit" name="Confirm">
-        <h5 class="card-title mt-3">Product ID: {{ products.id }}</h5>
-        <p class="card-text">Product Name: {{ products.name }}</p>
+            <div class="form-actions justify-content-center">
+                <button type="submit" class="btn btn-danger">Delete Product</button>
+                <a href="{% url 'home' %}" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
 </div>
+
 {% endblock %}

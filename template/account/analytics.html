@@ -1,262 +1,400 @@
 {% extends 'main.html' %}
 {% block content %}
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-    :root {
-        --glass-bg: rgba(255, 255, 255, 0.05);
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --accent-purple: #8b5cf6;
-        --accent-cyan: #06b6d4;
-        --accent-rose: #f43f5e;
-        --text-dim: #94a3b8;
+    .analytics-shell {
+        display: grid;
+        gap: 1.5rem;
     }
 
-    body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        /* Deep Modern Tech Gradient */
-        background: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                    radial-gradient(at 100% 0%, hsla(225,39%,10%,1) 0, transparent 50%), 
-                    #020617;
-        color: #f8fafc;
-        min-height: 100vh;
-    }
-
-    .analytics-header {
-        padding: 2rem 0;
-    }
-
-    .analytics-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--glass-border);
-        border-radius: 24px;
-        padding: 24px;
-        height: 320px;
-        transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-
-    .analytics-card:hover {
-        border-color: rgba(139, 92, 246, 0.5);
-        transform: translateY(-5px);
-    }
-
-    .analytics-card h6 {
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        color: var(--text-dim);
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        margin-bottom: 20px;
+    .analytics-toolbar {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
     }
 
-    .analytics-card h6::before {
-        content: '';
-        width: 8px;
-        height: 8px;
-        background: var(--accent-purple);
-        border-radius: 50%;
-        box-shadow: 0 0 10px var(--accent-purple);
+    .summary-grid,
+    .chart-grid {
+        display: grid;
+        gap: 1rem;
     }
 
-    canvas {
-        max-height: 220px !important;
+    .summary-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
-    /* Custom Scrollbar for modern look */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #020617; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+    .chart-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .summary-card,
+    .chart-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .summary-card {
+        padding: 1.35rem;
+    }
+
+    .summary-card small,
+    .chart-kicker {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .summary-value {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 0.35rem;
+        color: var(--ink-900);
+    }
+
+    .summary-card p {
+        margin: 0;
+        color: var(--ink-500);
+    }
+
+    .chart-card {
+        padding: 1.35rem;
+        min-height: 360px;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .chart-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .chart-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .chart-head h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 800;
+    }
+
+    .chart-head p {
+        margin: 0;
+        color: var(--ink-500);
+        max-width: 28ch;
+    }
+
+    .chart-wrap {
+        position: relative;
+        flex: 1;
+        min-height: 240px;
+    }
+
+    @media (max-width: 1200px) {
+        .summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .chart-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .summary-grid,
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="container py-4">
-    <div class="analytics-header">
-        <h2 class="fw-bold mb-1">Intelligence Hub</h2>
-        <p class="text-white">Real-time order metrics and status distribution</p>
-    </div>
+<div class="analytics-shell">
+    <section class="app-hero">
+        <span class="page-kicker">Analytics</span>
+        <h1 class="page-title">Operational insight that feels like part of the product, not a plugin.</h1>
+        <p class="page-copy">
+            These charts use your real order status and daily activity data, now presented in a cleaner analytics
+            workspace that matches the rest of the CRM.
+        </p>
 
-    <div class="row g-4">
-        <div class="col-lg-4 col-md-6">
-            <div class="analytics-card">
-                <h6><i class="fas fa-chart-bar"></i> Status Volume</h6>
-                <canvas id="barChart"></canvas>
-            </div>
+        <div class="analytics-toolbar">
+            <a class="btn btn-light" href="{% url 'order_list' %}">
+                <i class="bi bi-box-seam me-2"></i>Order Board
+            </a>
+            <a class="btn btn-outline-secondary" href="{% url 'revenue' %}">
+                <i class="bi bi-currency-rupee me-2"></i>Revenue View
+            </a>
         </div>
+    </section>
 
-        <div class="col-lg-4 col-md-6">
-            <div class="analytics-card">
-                <h6><i class="fas fa-chart-pie"></i> Distribution Ratio</h6>
-                <canvas id="doughnutChart"></canvas>
-            </div>
-        </div>
+    <section class="summary-grid">
+        <article class="summary-card">
+            <small>Total Tracked Orders</small>
+            <div class="summary-value" id="analytics-total-orders">0</div>
+            <p>Calculated directly from the live order-status dataset.</p>
+        </article>
 
-        <div class="col-lg-4 col-md-12">
-            <div class="analytics-card">
-                <h6><i class="fas fa-circle-notch"></i> Breakdown</h6>
-                <canvas id="pieChart"></canvas>
-            </div>
-        </div>
-    </div>
+        <article class="summary-card">
+            <small>Status Types</small>
+            <div class="summary-value" id="analytics-status-types">0</div>
+            <p>Distinct fulfillment states currently represented in your data.</p>
+        </article>
 
-    <div class="row g-4 mt-2">
-        <div class="col-lg-4 col-md-6">
-            <div class="analytics-card">
-                <h6><i class="fas fa-line-chart"></i> Growth Vector</h6>
-                <canvas id="lineChart"></canvas>
-            </div>
-        </div>
+        <article class="summary-card">
+            <small>Active Days</small>
+            <div class="summary-value" id="analytics-active-days">0</div>
+            <p>Days with recorded order activity in the current timeline.</p>
+        </article>
 
-        <div class="col-lg-4 col-md-6">
-            <div class="analytics-card">
-                <h6><i class="fas fa-area-chart"></i> Density Area</h6>
-                <canvas id="areaChart"></canvas>
-            </div>
-        </div>
+        <article class="summary-card">
+            <small>Top Status</small>
+            <div class="summary-value" id="analytics-top-status">No data</div>
+            <p id="analytics-top-status-note">This updates from the real status distribution above.</p>
+        </article>
+    </section>
 
-        <div class="col-lg-4 col-md-12">
-            <div class="analytics-card">
-                <h6><i class="fas fa-align-left"></i> Daily Velocity</h6>
-                <canvas id="ordersBarChart"></canvas>
+    <section class="chart-grid">
+        <article class="chart-card">
+            <div class="chart-head">
+                <div>
+                    <span class="chart-kicker">Status Volume</span>
+                    <h3>Orders by status</h3>
+                </div>
+                <p>Quick comparison of how many orders sit in each lifecycle state.</p>
             </div>
-        </div>
-    </div>
+            <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+        </article>
+
+        <article class="chart-card">
+            <div class="chart-head">
+                <div>
+                    <span class="chart-kicker">Distribution</span>
+                    <h3>Status share</h3>
+                </div>
+                <p>Ratio of each order status across the current order book.</p>
+            </div>
+            <div class="chart-wrap"><canvas id="doughnutChart"></canvas></div>
+        </article>
+
+        <article class="chart-card">
+            <div class="chart-head">
+                <div>
+                    <span class="chart-kicker">Breakdown</span>
+                    <h3>Alternate composition</h3>
+                </div>
+                <p>A second composition view for teams that prefer a classic pie chart.</p>
+            </div>
+            <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+        </article>
+
+        <article class="chart-card">
+            <div class="chart-head">
+                <div>
+                    <span class="chart-kicker">Order Flow</span>
+                    <h3>Daily trend line</h3>
+                </div>
+                <p>Shows the direction of order activity across each recorded day.</p>
+            </div>
+            <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
+        </article>
+
+        <article class="chart-card">
+            <div class="chart-head">
+                <div>
+                    <span class="chart-kicker">Volume Density</span>
+                    <h3>Activity area</h3>
+                </div>
+                <p>A filled view to make spikes and quieter periods easier to spot.</p>
+            </div>
+            <div class="chart-wrap"><canvas id="areaChart"></canvas></div>
+        </article>
+
+        <article class="chart-card">
+            <div class="chart-head">
+                <div>
+                    <span class="chart-kicker">Daily Count</span>
+                    <h3>Orders per day</h3>
+                </div>
+                <p>Bar chart view of exactly how many orders landed on each day.</p>
+            </div>
+            <div class="chart-wrap"><canvas id="ordersBarChart"></canvas></div>
+        </article>
+    </section>
 </div>
 
 <script id="status-data" type="application/json">{{ status_data|safe }}</script>
 <script id="orders-data" type="application/json">{{ orders_per_day|safe }}</script>
 
 <script>
-const statusData = JSON.parse(document.getElementById('status-data').textContent);
-const ordersData = JSON.parse(document.getElementById('orders-data').textContent);
+    const statusData = JSON.parse(document.getElementById('status-data').textContent || '[]');
+    const ordersData = JSON.parse(document.getElementById('orders-data').textContent || '[]');
 
-const statusLabels = statusData.map(x => x.status);
-const statusCounts = statusData.map(x => x.count);
+    const statusLabels = statusData.map((item) => item.status);
+    const statusCounts = statusData.map((item) => item.count);
+    const orderDates = ordersData.map((item) => item.date);
+    const orderCounts = ordersData.map((item) => item.count);
 
-const orderDates = ordersData.map(x => x.date);
-const orderCounts = ordersData.map(x => x.count);
+    const totalTrackedOrders = statusCounts.reduce((sum, value) => sum + value, 0);
+    const topStatus = statusData.reduce((best, item) => !best || item.count > best.count ? item : best, null);
 
-// Modern Color Palette
-const colors = {
-    purple: '#8b5cf6',
-    cyan: '#06b6d4',
-    rose: '#f43f5e',
-    amber: '#fbbf24',
-    bg: 'rgba(139, 92, 246, 0.2)'
-};
+    document.getElementById('analytics-total-orders').textContent = totalTrackedOrders;
+    document.getElementById('analytics-status-types').textContent = statusData.length;
+    document.getElementById('analytics-active-days').textContent = ordersData.length;
+    document.getElementById('analytics-top-status').textContent = topStatus ? topStatus.status : 'No data';
+    document.getElementById('analytics-top-status-note').textContent = topStatus
+        ? `${topStatus.count} orders currently sit in this status.`
+        : 'Status insight will appear once orders are available.';
 
-const commonOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: {
-            position: 'bottom',
-            labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 10 } }
+    Chart.defaults.font.family = 'Manrope, sans-serif';
+    Chart.defaults.color = '#6f8398';
+
+    const colors = ['#0f766e', '#2563eb', '#d97706', '#be123c', '#64748b'];
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    usePointStyle: true,
+                    padding: 16
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#6f8398' },
+                grid: { display: false }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#6f8398',
+                    precision: 0
+                },
+                grid: { color: 'rgba(19, 34, 56, 0.08)' }
+            }
         }
-    },
-    scales: {
-        x: { ticks: { color: '#64748b' }, grid: { display: false } },
-        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } }
-    }
-};
+    };
 
-/* STATUS BAR */
-new Chart(document.getElementById('barChart'), {
-    type: 'bar',
-    data: {
-        labels: statusLabels,
-        datasets: [{
-            label: 'Orders',
-            data: statusCounts,
-            backgroundColor: colors.purple,
-            borderRadius: 8
-        }]
-    },
-    options: commonOptions
-});
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                label: 'Orders',
+                data: statusCounts,
+                backgroundColor: colors[0],
+                borderRadius: 14,
+                borderSkipped: false
+            }]
+        },
+        options: commonOptions
+    });
 
-/* STATUS DOUGHNUT */
-new Chart(document.getElementById('doughnutChart'), {
-    type: 'doughnut',
-    data: {
-        labels: statusLabels,
-        datasets: [{
-            data: statusCounts,
-            backgroundColor: [colors.purple, colors.cyan, colors.rose, colors.amber],
-            borderWidth: 0,
-            hoverOffset: 20
-        }]
-    },
-    options: { ...commonOptions, cutout: '75%' }
-});
+    new Chart(document.getElementById('doughnutChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusCounts,
+                backgroundColor: colors.slice(0, statusCounts.length),
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: commonOptions.plugins
+        }
+    });
 
-/* STATUS PIE */
-new Chart(document.getElementById('pieChart'), {
-    type: 'pie',
-    data: {
-        labels: statusLabels,
-        datasets: [{
-            data: statusCounts,
-            backgroundColor: [colors.purple, colors.cyan, colors.rose, colors.amber],
-            borderWidth: 0
-        }]
-    },
-    options: commonOptions
-});
+    new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusCounts,
+                backgroundColor: colors.slice(0, statusCounts.length),
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: commonOptions.plugins
+        }
+    });
 
-/* ORDERS LINE */
-new Chart(document.getElementById('lineChart'), {
-    type: 'line',
-    data: {
-        labels: orderDates,
-        datasets: [{
-            label: 'Orders',
-            data: orderCounts,
-            borderColor: colors.cyan,
-            borderWidth: 3,
-            pointBackgroundColor: colors.cyan,
-            tension: 0.4
-        }]
-    },
-    options: commonOptions
-});
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: orderDates,
+            datasets: [{
+                label: 'Orders',
+                data: orderCounts,
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                pointBackgroundColor: '#2563eb',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                tension: 0.35,
+                fill: false
+            }]
+        },
+        options: commonOptions
+    });
 
-/* ORDERS AREA */
-new Chart(document.getElementById('areaChart'), {
-    type: 'line',
-    data: {
-        labels: orderDates,
-        datasets: [{
-            label: 'Orders',
-            data: orderCounts,
-            fill: true,
-            backgroundColor: 'rgba(6, 182, 212, 0.1)',
-            borderColor: colors.cyan,
-            tension: 0.4
-        }]
-    },
-    options: commonOptions
-});
+    new Chart(document.getElementById('areaChart'), {
+        type: 'line',
+        data: {
+            labels: orderDates,
+            datasets: [{
+                label: 'Orders',
+                data: orderCounts,
+                borderColor: '#0f766e',
+                backgroundColor: 'rgba(15, 118, 110, 0.12)',
+                pointBackgroundColor: '#0f766e',
+                pointRadius: 3,
+                tension: 0.35,
+                fill: true
+            }]
+        },
+        options: commonOptions
+    });
 
-/* ORDERS BAR */
-new Chart(document.getElementById('ordersBarChart'), {
-    type: 'bar',
-    data: {
-        labels: orderDates,
-        datasets: [{
-            label: 'Daily Count',
-            data: orderCounts,
-            backgroundColor: colors.rose,
-            borderRadius: 5
-        }]
-    },
-    options: commonOptions
-});
+    new Chart(document.getElementById('ordersBarChart'), {
+        type: 'bar',
+        data: {
+            labels: orderDates,
+            datasets: [{
+                label: 'Daily orders',
+                data: orderCounts,
+                backgroundColor: '#d97706',
+                borderRadius: 12,
+                borderSkipped: false
+            }]
+        },
+        options: commonOptions
+    });
 </script>
 
 {% endblock %}

@@ -1,56 +1,31 @@
-<br>
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <a href="{% url 'order_list' %}" class="text-decoration-none">
+            <div class="surface-panel text-center p-4 h-100">
+                <small class="d-block text-uppercase fw-bold mb-2" style="letter-spacing:0.08em;color:var(--ink-500);">Total Orders</small>
+                <h2 class="fw-bold mb-0">{{ total_orders }}</h2>
+            </div>
+        </a>
+    </div>
 
-<div class="row">
-	<div class="col">
-		<div class="col-md">
-			<a href="{% url 'order_list' %}" class="text-decoration-none">
-			<div class="card text-center text-white  mb-3" id="total-orders">
-			  	<div class="card-header">
-			  		<h5 class="card-title">Total Orders</h5>
-			  	</div>
-			  	<div class="card-body">
-			    	<h3 class="card-title">{{ total_orders }}</h3>
-			  	</div>
-			</div>
-			</a>
-		</div>
-	</div>
+    <div class="col-md-3">
+        <div class="surface-panel text-center p-4 h-100">
+            <small class="d-block text-uppercase fw-bold mb-2" style="letter-spacing:0.08em;color:var(--ink-500);">Delivered</small>
+            <h2 class="fw-bold mb-0">{{ delivered }}</h2>
+        </div>
+    </div>
 
-	<div class="col">
-		<div class="col-md">
-			<div class="card text-center text-white  mb-3" id="orders-delivered">
-			  	<div class="card-header">
-			  		<h5 class="card-title">Orders Delivered</h5>
-			  	</div>
-			  	<div class="card-body">
-			    	<h3 class="card-title">{{ delivered }}</h3>
-			  	</div>
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="col-md">
-			<div class="card text-center text-white  mb-3" id="orders-on-way">
-			  	<div class="card-header">
-			  		<h5 class="card-title">Orders on way</h5>
-			  	</div>
-			  	<div class="card-body">
-			    	<h3 class="card-title">{{ out_for_delivery }}</h3>
-			  	</div>
-			</div>
-		</div>
-	</div>
+    <div class="col-md-3">
+        <div class="surface-panel text-center p-4 h-100">
+            <small class="d-block text-uppercase fw-bold mb-2" style="letter-spacing:0.08em;color:var(--ink-500);">Out For Delivery</small>
+            <h2 class="fw-bold mb-0">{{ out_for_delivery }}</h2>
+        </div>
+    </div>
 
-	<div class="col">
-		<div class="col-md">
-			<div class="card text-center text-white  mb-3" id="orders-pending">
-			  	<div class="card-header">
-			  		<h5 class="card-title">Orders Pending</h5>
-			  	</div>
-			  	<div class="card-body">
-			    	<h3 class="card-title">{{ pending }}</h3>
-			  	</div>
-			</div>
-		</div>
-	</div>
+    <div class="col-md-3">
+        <div class="surface-panel text-center p-4 h-100">
+            <small class="d-block text-uppercase fw-bold mb-2" style="letter-spacing:0.08em;color:var(--ink-500);">Pending</small>
+            <h2 class="fw-bold mb-0">{{ pending }}</h2>
+        </div>
+    </div>
 </div>

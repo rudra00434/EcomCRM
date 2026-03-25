@@ -1,343 +1,895 @@
 {% extends 'main.html' %}
 {% block content %}
+{% load static %}
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 
 <style>
     :root {
-        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
-        --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        --info-gradient: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-        --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        --danger-gradient: linear-gradient(135deg, #dc3545, #ff6b81);
-        --secondary-gradient: linear-gradient(135deg, #6c757d, #adb5bd);
-        --dark-gradient: linear-gradient(135deg, #212529, #343a40);
-        --light-gradient: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        --glass-bg: rgba(255, 255, 255, 0.95);
+        --dashboard-bg: radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 26%),
+                        radial-gradient(circle at top right, rgba(245, 158, 11, 0.14), transparent 24%),
+                        linear-gradient(180deg, #f7f3ea 0%, #eef3f7 45%, #f7f8fb 100%);
+        --ink-900: #142235;
+        --ink-700: #34506d;
+        --ink-500: #6b8299;
+        --line-soft: rgba(20, 34, 53, 0.08);
+        --surface: rgba(255, 255, 255, 0.84);
+        --surface-strong: #ffffff;
+        --teal: #0f766e;
+        --teal-soft: rgba(15, 118, 110, 0.12);
+        --amber: #d97706;
+        --amber-soft: rgba(217, 119, 6, 0.12);
+        --rose: #be123c;
+        --rose-soft: rgba(190, 18, 60, 0.1);
+        --blue: #2563eb;
+        --blue-soft: rgba(37, 99, 235, 0.12);
+        --shadow-lg: 0 24px 60px rgba(20, 34, 53, 0.12);
+        --shadow-sm: 0 10px 30px rgba(20, 34, 53, 0.08);
     }
 
-    body { background-color: #f8fafc; color: #1e293b; }
-
-    /* ================= CLOCK WIDGET STYLES ================= */
-    .clock-container {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 20px;
+    body {
+        font-family: 'Manrope', sans-serif;
+        background: var(--dashboard-bg) !important;
+        color: var(--ink-900);
     }
 
-    .clock-widget {
-        background: #ffffff;
-        border: 1px solid rgba(0,0,0,0.05);
-        border-radius: 1rem;
-        padding: 12px 24px;
-        display: inline-flex;
-        align-items: center;
-        gap: 20px;
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-    }
-
-    .clock-time {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #4338ca;
-        letter-spacing: 1px;
-    }
-
-    .clock-date-group {
-        display: flex;
-        flex-direction: column;
-        border-left: 2px solid #f1f5f9;
-        padding-left: 15px;
-    }
-
-    .clock-day {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: #6366f1;
-        font-weight: 800;
-    }
-
-    .clock-date {
-        font-size: 0.8rem;
-        color: #94a3b8;
-        font-weight: 500;
-    }
-
-    .pulse-dot {
-        width: 8px;
-        height: 8px;
-        background: #10b981;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 10px;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-    /* ================= END CLOCK STYLES ================= */
-
-    .stat-card {
-        border: none;
-        border-radius: 1.25rem;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1) !important;
-    }
-
-    .stat-icon {
-        position: absolute;
-        right: -10px;
-        bottom: -10px;
-        font-size: 5rem;
-        opacity: 0.15;
-        transform: rotate(-15deg);
-    }
-
-    .main-card {
-        border: none;
-        border-radius: 1.5rem;
-        background: var(--glass-bg);
-        backdrop-filter: blur(10px);
-    }
-
-    .card-header-custom {
-        padding: 1.5rem;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
+    .main-wrapper {
         background: transparent;
     }
 
-    .table { border-collapse: separate; border-spacing: 0 10px; }
-    .table thead th { border: none; background: transparent; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
-    .table tbody tr { transition: all 0.2s; border-radius: 1rem; }
-    .table tbody tr td { background: #ffffff; border: none; padding: 1rem; vertical-align: middle; }
-    .table tbody tr td:first-child { border-radius: 1rem 0 0 1rem; }
-    .table tbody tr td:last-child { border-radius: 0 1rem 1rem 0; }
-    .table tbody tr:hover td { background: #f1f5f9; }
+    .dashboard-shell {
+        display: grid;
+        gap: 1.5rem;
+    }
 
-    .btn-custom { border-radius: 0.75rem; padding: 0.5rem 1.25rem; font-weight: 600; transition: all 0.3s; }
-    .badge-pill { border-radius: 50px; padding: 0.5em 1em; font-weight: 500; }
+    .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.95fr);
+        gap: 1.25rem;
+    }
 
-.recent-header {
-    background: linear-gradient(135deg, #0d6efd, #3d8bfd);
-    color: white;
-}
-.icon-circle {
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(13,110,253,0.12);
-    border-radius: 50%;
-}
+    .hero-panel,
+    .summary-panel,
+    .metric-card,
+    .chart-panel,
+    .list-panel {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: 28px;
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
 
+    .hero-panel {
+        position: relative;
+        overflow: hidden;
+        padding: 2rem;
+        background:
+            radial-gradient(circle at top right, rgba(245, 158, 11, 0.18), transparent 30%),
+            linear-gradient(135deg, #102238 0%, #18324f 45%, #1e4962 100%);
+        color: #f8fafc;
+        min-height: 280px;
+    }
 
+    .hero-panel::after {
+        content: '';
+        position: absolute;
+        right: -90px;
+        bottom: -90px;
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,255,255,0.14), transparent 65%);
+    }
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(248, 250, 252, 0.9);
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 800;
+    }
+
+    .eyebrow::before {
+        content: '';
+        width: 0.6rem;
+        height: 0.6rem;
+        border-radius: 50%;
+        background: #34d399;
+        box-shadow: 0 0 18px rgba(52, 211, 153, 0.8);
+    }
+
+    .hero-title {
+        font-size: clamp(2rem, 4.2vw, 3.35rem);
+        line-height: 1.03;
+        font-weight: 800;
+        max-width: 12ch;
+        margin: 1rem 0 0.85rem;
+        letter-spacing: -0.04em;
+    }
+
+    .hero-copy {
+        max-width: 60ch;
+        color: rgba(226, 232, 240, 0.84);
+        font-size: 1rem;
+        margin-bottom: 1.6rem;
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-button,
+    .ghost-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        border-radius: 999px;
+        padding: 0.85rem 1.15rem;
+        text-decoration: none;
+        font-weight: 700;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+
+    .hero-button {
+        background: #f8fafc;
+        color: var(--ink-900);
+        box-shadow: 0 18px 30px rgba(15, 23, 42, 0.18);
+    }
+
+    .ghost-button {
+        background: rgba(255, 255, 255, 0.08);
+        color: #f8fafc;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .hero-button:hover,
+    .ghost-button:hover {
+        transform: translateY(-2px);
+        color: inherit;
+    }
+
+    .hero-microgrid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin-top: 1.8rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-chip {
+        padding: 0.9rem 1rem;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.09);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .hero-chip span {
+        display: block;
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(226, 232, 240, 0.72);
+        margin-bottom: 0.45rem;
+        font-weight: 700;
+    }
+
+    .hero-chip strong {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .summary-panel {
+        padding: 1.5rem;
+        display: grid;
+        gap: 1.1rem;
+        align-content: start;
+        background:
+            linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.82)),
+            linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(245, 158, 11, 0.08));
+    }
+
+    .summary-topline {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .summary-kicker {
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        font-weight: 800;
+    }
+
+    .summary-headline {
+        font-size: 1.3rem;
+        font-weight: 800;
+        margin: 0.4rem 0 0;
+        max-width: 14ch;
+    }
+
+    .clock-badge {
+        min-width: 118px;
+        padding: 0.85rem 0.95rem;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #fff7ed, #fef3c7);
+        border: 1px solid rgba(217, 119, 6, 0.14);
+        text-align: center;
+    }
+
+    .clock-time {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 1.18rem;
+        font-weight: 700;
+        color: #9a3412;
+    }
+
+    .clock-day {
+        font-size: 0.73rem;
+        font-weight: 800;
+        color: #b45309;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .clock-date {
+        color: #9a3412;
+        font-size: 0.78rem;
+    }
+
+    .pulse-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: var(--teal);
+        background: var(--teal-soft);
+        width: fit-content;
+        padding: 0.5rem 0.8rem;
+        border-radius: 999px;
+    }
+
+    .pulse-status::before {
+        content: '';
+        width: 0.55rem;
+        height: 0.55rem;
+        border-radius: 50%;
+        background: var(--teal);
+        box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.4);
+        animation: dashboardPulse 2s infinite;
+    }
+
+    @keyframes dashboardPulse {
+        0% { box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.45); }
+        70% { box-shadow: 0 0 0 10px rgba(15, 118, 110, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(15, 118, 110, 0); }
+    }
+
+    .summary-list {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: center;
+        padding: 0.95rem 1rem;
+        border-radius: 18px;
+        border: 1px solid var(--line-soft);
+        background: rgba(248, 250, 252, 0.86);
+    }
+
+    .summary-row small {
+        display: block;
+        color: var(--ink-500);
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.2rem;
+    }
+
+    .summary-row strong {
+        font-size: 1.15rem;
+        font-weight: 800;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .metric-card {
+        padding: 1.2rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .metric-card:hover,
+    .chart-panel:hover,
+    .list-panel:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .metric-tone {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
+    }
+
+    .tone-blue { background: var(--blue-soft); color: var(--blue); }
+    .tone-amber { background: var(--amber-soft); color: var(--amber); }
+    .tone-teal { background: var(--teal-soft); color: var(--teal); }
+    .tone-rose { background: var(--rose-soft); color: var(--rose); }
+
+    .metric-card small {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.73rem;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+    }
+
+    .metric-card strong {
+        display: block;
+        font-size: 2rem;
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        margin-bottom: 0.35rem;
+    }
+
+    .metric-card p {
+        margin: 0;
+        font-size: 0.88rem;
+        color: var(--ink-500);
+    }
+
+    .chart-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.95fr);
+        gap: 1rem;
+    }
+
+    .chart-panel {
+        padding: 1.4rem;
+        transition: transform 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .panel-head small {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        font-weight: 800;
+        margin-bottom: 0.4rem;
+    }
+
+    .panel-head h3,
+    .panel-head h4 {
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .panel-note {
+        color: var(--ink-500);
+        font-size: 0.9rem;
+        max-width: 34ch;
+    }
+
+    .chart-wrap {
+        position: relative;
+        height: 320px;
+    }
+
+    .status-stack {
+        display: grid;
+        gap: 0.9rem;
+        margin-top: 1rem;
+    }
+
+    .status-line {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 0.8rem;
+        align-items: center;
+    }
+
+    .status-dot {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 999px;
+    }
+
+    .status-track {
+        height: 0.55rem;
+        border-radius: 999px;
+        background: rgba(20, 34, 53, 0.08);
+        overflow: hidden;
+    }
+
+    .status-fill {
+        height: 100%;
+        border-radius: inherit;
+    }
+
+    .list-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+        gap: 1rem;
+    }
+
+    .list-panel {
+        padding: 1.4rem;
+        transition: transform 0.24s ease, box-shadow 0.24s ease;
+    }
+
+    .toolbar-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.72rem 1rem;
+        border-radius: 999px;
+        background: var(--ink-900);
+        color: #f8fafc;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .toolbar-button:hover {
+        color: #f8fafc;
+    }
+
+    .list-stack {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .customer-row,
+    .order-row {
+        display: grid;
+        gap: 0.8rem;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--line-soft);
+    }
+
+    .customer-row {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    .order-row {
+        grid-template-columns: minmax(0, 1.35fr) minmax(110px, 0.8fr) auto auto;
+    }
+
+    .avatar-seal {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #0f766e, #2563eb);
+        color: white;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 1px 1px rgba(255,255,255,0.3);
+    }
+
+    .row-title {
+        font-weight: 800;
+        margin-bottom: 0.2rem;
+    }
+
+    .row-meta {
+        color: var(--ink-500);
+        font-size: 0.9rem;
+    }
+
+    .soft-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        padding: 0.65rem 0.95rem;
+        border-radius: 999px;
+        background: rgba(20, 34, 53, 0.05);
+        color: var(--ink-900);
+        text-decoration: none;
+        font-weight: 700;
+        border: 1px solid rgba(20, 34, 53, 0.08);
+    }
+
+    .soft-button:hover {
+        color: var(--ink-900);
+        background: rgba(20, 34, 53, 0.08);
+    }
+
+    .micro-actions {
+        display: inline-flex;
+        border-radius: 999px;
+        overflow: hidden;
+        border: 1px solid rgba(20, 34, 53, 0.08);
+    }
+
+    .micro-actions a {
+        width: 2.6rem;
+        height: 2.6rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        color: var(--ink-900);
+        text-decoration: none;
+    }
+
+    .micro-actions a + a {
+        border-left: 1px solid rgba(20, 34, 53, 0.08);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+    }
+
+    .status-delivered {
+        background: rgba(34, 197, 94, 0.12);
+        color: #15803d;
+    }
+
+    .status-pending {
+        background: rgba(245, 158, 11, 0.14);
+        color: #b45309;
+    }
+
+    .status-transit {
+        background: rgba(37, 99, 235, 0.12);
+        color: #1d4ed8;
+    }
+
+    .empty-note {
+        padding: 1.25rem;
+        text-align: center;
+        color: var(--ink-500);
+        border: 1px dashed rgba(20, 34, 53, 0.12);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.65);
+    }
+
+    @media (max-width: 1400px) {
+        .metrics-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 1100px) {
+        .hero-grid,
+        .chart-grid,
+        .list-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .metrics-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .hero-microgrid {
+            grid-template-columns: 1fr;
+        }
+
+        .customer-row,
+        .order-row {
+            grid-template-columns: 1fr;
+            justify-items: start;
+        }
+    }
+
+    @media (max-width: 540px) {
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-panel,
+        .summary-panel,
+        .metric-card,
+        .chart-panel,
+        .list-panel {
+            border-radius: 22px;
+        }
+    }
 </style>
-<div class="card card-body p-4 rounded-4 mb-3"
-     style="background: linear-gradient(135deg, #1d2b64, #3f5efb);">
-    <div class="d-flex align-items-center justify-content-between text-white">
-        <div>
-            <h6 class="opacity-75 mb-1">Welcome back 👋</h6>
-            <h3 class="fw-bold mb-0">{{ request.user.username }}</h3>
-        </div>
-        <div class="rounded-circle bg-white bg-opacity-25 d-flex align-items-center justify-content-center"
-             style="width:52px;height:52px;">
-            <i class="bi bi-person-fill fs-4"></i>
-        </div>
-    </div>
-</div>
 
-<div class="container-fluid py-4">
+{{ status_data|json_script:"dashboard-status-data" }}
+{{ orders_per_day|json_script:"dashboard-orders-data" }}
 
-    <div class="clock-container">
-        <div class="clock-widget shadow-sm">
-            <div class="clock-time">
-                <span id="txt-time">00:00:00</span>
+<div class="dashboard-shell">
+    <section class="hero-grid">
+        <article class="hero-panel">
+            <span class="eyebrow">Operations Overview</span>
+            <h1 class="hero-title">A calmer, sharper cockpit for your daily commerce workflow.</h1>
+            <p class="hero-copy">
+                Track orders, monitor fulfillment movement, and jump straight into customer or order actions
+                from one polished workspace without changing any of your existing flows.
+            </p>
+
+            <div class="hero-actions">
+                <a class="hero-button" href="{% url 'create_orders' %}">
+                    <i class="fas fa-plus-circle"></i>
+                    Place New Order
+                </a>
+                <a class="ghost-button" href="{% url 'create_customer' %}">
+                    <i class="fas fa-user-plus"></i>
+                    Add Customer
+                </a>
+                <a class="ghost-button" href="{% url 'analytics' %}">
+                    <i class="fas fa-chart-line"></i>
+                    Open Analytics
+                </a>
+                <a class="ghost-button" href="{% url 'revenue' %}">
+                    <i class="fas fa-wallet"></i>
+                    Revenue View
+                </a>
             </div>
-            <div class="clock-date-group">
-                <span class="clock-day" id="txt-day">---</span>
-                <span class="clock-date" id="txt-date">--- --, ----</span>
-            </div>
-        </div>
-    </div>
 
-    <div class="row mb-5 g-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="card stat-card shadow-sm text-white h-100" style="background: var(--primary-gradient);">
-                <div class="card-body p-4">
-                    <i class="fas fa-users stat-icon"></i>
-                    <h6 class="text-uppercase fw-bold opacity-75 mb-2" style="font-size: 0.8rem;">Total Orders</h6>
-                    <h2 class="display-6 fw-bold mb-0">{{ orders.count }}</h2>
+            <div class="hero-microgrid">
+                <div class="hero-chip">
+                    <span>Customers</span>
+                    <strong>{{ total_customers }}</strong>
+                </div>
+                <div class="hero-chip">
+                    <span>Orders</span>
+                    <strong>{{ total_orders }}</strong>
+                </div>
+                <div class="hero-chip">
+                    <span>User</span>
+                    <strong>{{ request.user.username }}</strong>
                 </div>
             </div>
-        </div>
+        </article>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="card stat-card shadow-sm text-white h-100" style="background: var(--danger-gradient);">
-                <div class="card-body p-4">
-                    <i class="fas fa-clock stat-icon"></i>
-                    <h6 class="text-uppercase fw-bold opacity-75 mb-2" style="font-size: 0.8rem;">Pending Orders</h6>
-                    <h2 class="display-6 fw-bold mb-0">{{ pending }}</h2>
+        <aside class="summary-panel">
+            <div class="summary-topline">
+                <div>
+                    <div class="summary-kicker">Today at a glance</div>
+                    <h2 class="summary-headline">Your command center is live and updating in real time.</h2>
+                </div>
+
+                <div class="clock-badge">
+                    <div class="clock-day" id="txt-day">---</div>
+                    <div class="clock-time" id="txt-time">00:00:00</div>
+                    <div class="clock-date" id="txt-date">--- --, ----</div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="card stat-card shadow-sm text-white h-100" style="background: var(--warning-gradient);">
-                <div class="card-body p-4">
-                    <i class="fas fa-truck stat-icon"></i>
-                    <h6 class="text-uppercase fw-bold opacity-75 mb-2" style="font-size: 0.8rem;">Delivered</h6>
-                    <h2 class="display-6 fw-bold mb-0">{{ delivered }}</h2>
+            <div class="pulse-status">Live workspace online</div>
+
+            <div class="summary-list">
+                <div class="summary-row">
+                    <div>
+                        <small>Pending workload</small>
+                        <strong>{{ pending }} orders</strong>
+                    </div>
+                    <i class="fas fa-hourglass-half fa-lg" style="color: var(--amber);"></i>
+                </div>
+
+                <div class="summary-row">
+                    <div>
+                        <small>Completed today view</small>
+                        <strong>{{ delivered }} delivered</strong>
+                    </div>
+                    <i class="fas fa-badge-check fa-lg" style="color: var(--teal);"></i>
+                </div>
+
+                <div class="summary-row">
+                    <div>
+                        <small>In transit attention</small>
+                        <strong>{{ out_for_delivery }} moving now</strong>
+                    </div>
+                    <i class="fas fa-route fa-lg" style="color: var(--blue);"></i>
                 </div>
             </div>
-        </div>
+        </aside>
+    </section>
 
-        <div class="col-xl-3 col-md-6">
-            <div class="card stat-card shadow-sm text-white h-100" style="background: var(--success-gradient);">
-                <div class="card-body p-4">
-                    <i class="fas fa-truck stat-icon"></i>
-                    <h6 class="text-uppercase fw-bold opacity-75 mb-2" style="font-size: 0.8rem;">Out for Delivery</h6>
-                    <h2 class="display-6 fw-bold mb-0">{{ out_for_delivery }}</h2>
+    <section class="metrics-grid">
+        <article class="metric-card">
+            <div class="metric-tone tone-blue"><i class="fas fa-users"></i></div>
+            <small>Total Customers</small>
+            <strong>{{ total_customers }}</strong>
+            <p>Registered customer relationships currently in the system.</p>
+        </article>
+
+        <article class="metric-card">
+            <div class="metric-tone tone-teal"><i class="fas fa-box-open"></i></div>
+            <small>Total Orders</small>
+            <strong>{{ total_orders }}</strong>
+            <p>All orders captured across the current workspace.</p>
+        </article>
+
+        <article class="metric-card">
+            <div class="metric-tone tone-amber"><i class="fas fa-clock"></i></div>
+            <small>Pending</small>
+            <strong>{{ pending }}</strong>
+            <p>Orders still waiting for fulfillment action.</p>
+        </article>
+
+        <article class="metric-card">
+            <div class="metric-tone tone-teal"><i class="fas fa-check-circle"></i></div>
+            <small>Delivered</small>
+            <strong>{{ delivered }}</strong>
+            <p>Orders that have fully completed their journey.</p>
+        </article>
+
+        <article class="metric-card">
+            <div class="metric-tone tone-rose"><i class="fas fa-truck-fast"></i></div>
+            <small>Out For Delivery</small>
+            <strong>{{ out_for_delivery }}</strong>
+            <p>Orders currently moving through the final mile.</p>
+        </article>
+    </section>
+
+    <section class="chart-grid">
+        <article class="chart-panel">
+            <div class="panel-head">
+                <div>
+                    <small>Order Momentum</small>
+                    <h3>Daily order flow</h3>
+                </div>
+                <div class="panel-note">
+                    A direct view of how order volume is changing day by day across your business.
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="row g-4">
-        <div class="col-lg-5">
-            <div class="card main-card shadow-sm">
-                <div class="card-header-custom d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0 text-indigo-900">
-                        <i class="fas fa-user-friends me-2 text-primary"></i>Customers
-                    </h5>
-                    <a class="btn btn-primary btn-sm btn-custom shadow-sm" href="{% url 'create_customer' %}">
-                        <i class="fas fa-plus-circle me-1"></i> Add New
+            <div class="chart-wrap">
+                <canvas id="ordersTrendChart"></canvas>
+            </div>
+        </article>
+
+        <article class="chart-panel">
+            <div class="panel-head">
+                <div>
+                    <small>Status Mix</small>
+                    <h4>Fulfillment balance</h4>
+                </div>
+                <div class="panel-note">
+                    Distribution of all current order states based on the real records in your database.
+                </div>
+            </div>
+
+            <div class="chart-wrap" style="height: 220px;">
+                <canvas id="statusBreakdownChart"></canvas>
+            </div>
+
+            <div class="status-stack" id="statusLegend"></div>
+        </article>
+    </section>
+
+    <section class="list-grid">
+        <article class="list-panel">
+            <div class="panel-head">
+                <div>
+                    <small>Customer Directory</small>
+                    <h3>Active relationships</h3>
+                </div>
+                <a class="toolbar-button" href="{% url 'create_customer' %}">
+                    <i class="fas fa-plus"></i>
+                    Add New
+                </a>
+            </div>
+
+            <div class="list-stack">
+                {% for customer in customers %}
+                <div class="customer-row">
+                    <div class="avatar-seal">{{ customer.name|slice:":1"|upper }}</div>
+                    <div>
+                        <div class="row-title">{{ customer.name }}</div>
+                        <div class="row-meta">{{ customer.phone }}</div>
+                    </div>
+                    <a class="soft-button" href="{% url 'customer' customer.id %}">
+                        View Profile
                     </a>
                 </div>
-
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Customer</th>
-                                    <th>Phone</th>
-                                    <th class="text-end">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for customer in customers %}
-                                <tr>
-                                    <td class="fw-bold">{{ customer.name }}</td>
-                                    <td class="text-muted">{{ customer.phone }}</td>
-                                    <td class="text-end">
-                                        <a class="btn btn-sm btn-light btn-custom border" href="{% url 'customer' customer.id %}">
-                                            View Profile
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                {% empty %}
+                <div class="empty-note">No customers are available yet. Add your first customer to start the relationship pipeline.</div>
+                {% endfor %}
             </div>
-        </div>
+        </article>
 
-        <div class="col-lg-7">
-    <div class="card main-card shadow-sm border-0 rounded-4">
-
-        <!-- Header -->
-        <div class="card-header bg-white border-0 pt-4 pb-2 px-4">
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-
-                <div class="d-flex align-items-center">
-                    <div class="icon-circle me-2">
-                        <i class="bi bi-clock-history fs-5 text-primary"></i>
-                    </div>
-                    <h5 class="mb-0 fw-semibold">Recent Activity</h5>
+        <article class="list-panel">
+            <div class="panel-head">
+                <div>
+                    <small>Recent Activity</small>
+                    <h3>Latest order movement</h3>
                 </div>
-
-                <a class="btn btn-primary btn-sm rounded-3 px-3 shadow-sm"
-                   href="{% url 'create_orders' %}">
-                    <i class="bi bi-plus-lg me-1"></i> Place New Order
+                <a class="toolbar-button" href="{% url 'create_orders' %}">
+                    <i class="fas fa-plus"></i>
+                    Place Order
                 </a>
-
             </div>
-        </div>
 
-        <!-- Body -->
-        <div class="card-body px-4 pt-3 pb-4">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+            <div class="list-stack">
+                {% for order in orders|slice:":5" %}
+                <div class="order-row">
+                    <div>
+                        <div class="row-title">{{ order.product }}</div>
+                        <div class="row-meta">{{ order.date_created }}</div>
+                    </div>
 
-                    <thead class="table-light">
-                        <tr>
-                            <th class="fw-semibold">Product</th>
-                            <th class="fw-semibold">Date</th>
-                            <th class="fw-semibold">Status</th>
-                            <th class="text-center fw-semibold">Manage</th>
-                        </tr>
-                    </thead>
+                    <div>
+                        <span class="status-badge {% if order.status == 'Delivered' %}status-delivered{% elif order.status == 'Pending' %}status-pending{% else %}status-transit{% endif %}">
+                            {{ order.status }}
+                        </span>
+                    </div>
 
-                    <tbody>
-                        {% for order in orders|slice:":5" %}
-                        <tr>
-                            <td class="fw-semibold text-dark">{{ order.product }}</td>
+                    <a class="soft-button" href="{% url 'update_order' order.id %}">
+                        <i class="fas fa-pen"></i>
+                        Edit
+                    </a>
 
-                            <td class="text-muted small">
-                                {{ order.date_created }}
-                            </td>
-
-                            <td>
-                                <span class="badge rounded-pill px-3 py-2
-                                    {% if order.status == 'Delivered' %}
-                                        bg-success-subtle text-success border border-success
-                                    {% elif order.status == 'Pending' %}
-                                        bg-warning-subtle text-warning-emphasis border border-warning
-                                    {% else %}
-                                        bg-light text-secondary border
-                                    {% endif %}">
-                                    {{ order.status }}
-                                </span>
-                            </td>
-
-                            <td class="text-center">
-                                <div class="btn-group">
-                                    <a class="btn btn-sm btn-light border rounded-start"
-                                       href="{% url 'update_order' order.id %}">
-                                        <i class="fas fa-edit text-primary"></i>
-                                    </a>
-
-                                    <a class="btn btn-sm btn-light border rounded-end"
-                                       href="{% url 'delete_order' order.id %}">
-                                        <i class="fas fa-trash text-danger"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                </table>
+                    <div class="micro-actions">
+                        <a href="{% url 'update_order' order.id %}" aria-label="Update Order">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'delete_order' order.id %}" aria-label="Delete Order">
+                            <i class="fas fa-trash text-danger"></i>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-note">No recent orders found. Place a new order to start tracking activity here.</div>
+                {% endfor %}
             </div>
-        </div>
-
-    </div>
+        </article>
+    </section>
 </div>
-
 
 <script>
     function updateClock() {
@@ -347,13 +899,108 @@
         const seconds = String(now.getSeconds()).padStart(2, '0');
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        
-        document.getElementById('txt-time').innerHTML = `<span class="pulse-dot"></span>${hours}:${minutes}:${seconds}`;
+
+        document.getElementById('txt-time').textContent = `${hours}:${minutes}:${seconds}`;
         document.getElementById('txt-day').textContent = days[now.getDay()];
         document.getElementById('txt-date').textContent = `${months[now.getMonth()]} ${String(now.getDate()).padStart(2, '0')}, ${now.getFullYear()}`;
     }
+
     setInterval(updateClock, 1000);
     updateClock();
+
+    const statusData = JSON.parse(document.getElementById('dashboard-status-data').textContent);
+    const ordersData = JSON.parse(document.getElementById('dashboard-orders-data').textContent);
+
+    const statusPalette = ['#0f766e', '#d97706', '#2563eb', '#be123c', '#475569'];
+    const statusLabels = statusData.map(item => item.status);
+    const statusCounts = statusData.map(item => item.count);
+    const totalStatusCount = statusCounts.reduce((sum, value) => sum + value, 0);
+
+    const orderLabels = ordersData.map(item => item.date);
+    const orderCounts = ordersData.map(item => item.count);
+
+    new Chart(document.getElementById('ordersTrendChart'), {
+        type: 'line',
+        data: {
+            labels: orderLabels,
+            datasets: [{
+                label: 'Orders per day',
+                data: orderCounts,
+                fill: true,
+                borderColor: '#0f766e',
+                backgroundColor: 'rgba(15, 118, 110, 0.12)',
+                pointBackgroundColor: '#0f766e',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                tension: 0.35,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#6b8299' },
+                    grid: { display: false }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#6b8299',
+                        precision: 0,
+                    },
+                    grid: { color: 'rgba(20, 34, 53, 0.08)' }
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('statusBreakdownChart'), {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusCounts,
+                backgroundColor: statusPalette.slice(0, statusCounts.length),
+                borderWidth: 0,
+                hoverOffset: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '72%',
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    const statusLegend = document.getElementById('statusLegend');
+    statusData.forEach((item, index) => {
+        const percentage = totalStatusCount ? Math.round((item.count / totalStatusCount) * 100) : 0;
+        const row = document.createElement('div');
+        row.className = 'status-line';
+        row.innerHTML = `
+            <span class="status-dot" style="background:${statusPalette[index % statusPalette.length]}"></span>
+            <div>
+                <div style="display:flex;justify-content:space-between;gap:.75rem;margin-bottom:.35rem;">
+                    <strong style="font-size:.95rem;">${item.status}</strong>
+                    <span style="color:var(--ink-500);font-weight:700;">${item.count}</span>
+                </div>
+                <div class="status-track">
+                    <div class="status-fill" style="width:${percentage}%;background:${statusPalette[index % statusPalette.length]}"></div>
+                </div>
+            </div>
+            <span style="color:var(--ink-500);font-weight:800;">${percentage}%</span>
+        `;
+        statusLegend.appendChild(row);
+    });
 </script>
 
 {% endblock %}

@@ -1,0 +1,260 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<style>
+    .about-shell {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .about-grid,
+    .pillar-grid,
+    .principles-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .about-grid {
+        grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.9fr);
+    }
+
+    .pillar-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .principles-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .about-panel,
+    .about-side,
+    .pillar-card,
+    .principle-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        padding: 1.45rem;
+    }
+
+    .about-panel h3,
+    .about-side h3,
+    .pillar-card h3,
+    .principle-card h3 {
+        margin: 0 0 0.6rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .about-copy,
+    .about-side p,
+    .pillar-card p,
+    .principle-card p {
+        color: var(--ink-500);
+        margin: 0;
+    }
+
+    .section-kicker {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin-top: 1.2rem;
+    }
+
+    .stat-chip {
+        border-radius: 20px;
+        background: rgba(20, 34, 53, 0.04);
+        border: 1px solid var(--line-soft);
+        padding: 1rem;
+    }
+
+    .stat-chip small {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.7rem;
+        font-weight: 800;
+        margin-bottom: 0.3rem;
+    }
+
+    .stat-chip strong {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        color: var(--ink-900);
+    }
+
+    .journey-list {
+        display: grid;
+        gap: 0.9rem;
+        margin-top: 1rem;
+    }
+
+    .journey-step {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.9rem;
+        align-items: start;
+    }
+
+    .journey-marker {
+        width: 2.3rem;
+        height: 2.3rem;
+        border-radius: 16px;
+        background: rgba(15, 118, 110, 0.12);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .journey-step strong {
+        display: block;
+        margin-bottom: 0.2rem;
+        color: var(--ink-900);
+    }
+
+    .pillar-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 18px;
+        background: rgba(37, 99, 235, 0.1);
+        color: var(--info);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
+    }
+
+    .pillar-card .btn {
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 1100px) {
+        .about-grid,
+        .pillar-grid,
+        .principles-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="about-shell">
+    <section class="app-hero">
+        <span class="page-kicker">About EcomCRM</span>
+        <h1 class="page-title">We design calmer operating systems for fast-moving commerce teams.</h1>
+        <p class="page-copy">
+            EcomCRM brings customers, products, orders, analytics, and revenue into one operational workspace so
+            teams can spend less time stitching tools together and more time moving the business forward.
+        </p>
+    </section>
+
+    <section class="about-grid">
+        <article class="about-panel">
+            <span class="section-kicker">Who We Are</span>
+            <h3>A practical commerce workspace, not a pile of disconnected screens.</h3>
+            <p class="about-copy">
+                The product is built around real daily work: keeping customer context close, managing products
+                cleanly, moving orders through delivery, and understanding revenue without waiting on external
+                reporting tools. Every page is designed to reduce operational drag and make decisions easier.
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-chip">
+                    <small>Customer-first</small>
+                    <strong>Profiles + orders</strong>
+                </div>
+                <div class="stat-chip">
+                    <small>Inventory aware</small>
+                    <strong>Products + tags</strong>
+                </div>
+                <div class="stat-chip">
+                    <small>Insight ready</small>
+                    <strong>Charts + revenue</strong>
+                </div>
+                <div class="stat-chip">
+                    <small>Media workflow</small>
+                    <strong>Cloudinary backed</strong>
+                </div>
+            </div>
+        </article>
+
+        <aside class="about-side">
+            <span class="section-kicker">How We Think</span>
+            <h3>Professional software should feel clear, useful, and dependable.</h3>
+            <div class="journey-list">
+                <div class="journey-step">
+                    <span class="journey-marker">1</span>
+                    <div>
+                        <strong>Clarity over clutter</strong>
+                        <p>Important information should surface quickly without making the interface noisy.</p>
+                    </div>
+                </div>
+                <div class="journey-step">
+                    <span class="journey-marker">2</span>
+                    <div>
+                        <strong>Action close to context</strong>
+                        <p>Teams should be able to edit, review, and move work forward from the same place.</p>
+                    </div>
+                </div>
+                <div class="journey-step">
+                    <span class="journey-marker">3</span>
+                    <div>
+                        <strong>Business visibility built in</strong>
+                        <p>Analytics and revenue should live inside operations, not on a separate island.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="pillar-grid">
+        {% for pillar in platform_pillars %}
+        <article class="pillar-card">
+            <span class="pillar-icon"><i class="bi {{ pillar.icon }}"></i></span>
+            <h3>{{ pillar.title }}</h3>
+            <p>{{ pillar.copy }}</p>
+            <a class="btn btn-outline-secondary" href="{% url pillar.url_name %}">{{ pillar.url_label }}</a>
+        </article>
+        {% endfor %}
+    </section>
+
+    <section class="principles-grid">
+        <article class="principle-card">
+            <span class="section-kicker">Why It Matters</span>
+            <h3>Operations become easier when information stays connected.</h3>
+            <p>
+                Customer details, product media, order status, and revenue movement all influence each other.
+                Keeping them inside one system helps teams respond faster and with better context.
+            </p>
+        </article>
+
+        <article class="principle-card">
+            <span class="section-kicker">Where We’re Focused</span>
+            <h3>Cleaner workflow, stronger presentation, and decision-ready insight.</h3>
+            <p>
+                The goal is not just to store records. It is to make the workspace feel polished, trustworthy,
+                and useful enough for everyday business operations.
+            </p>
+        </article>
+    </section>
+</div>
+
+{% endblock %}

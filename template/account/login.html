@@ -1,137 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcomCRM | Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'CSS/main.css' %}?v=20260325-04">
     <style>
-        :root {
-            --primary-color: #4facfe;
-            --secondary-color: #00f2fe;
-            --text-color: #333;
-            --bg-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        body.auth-page {
+            min-height: 100vh;
             margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 2rem 1rem;
+            background:
+                radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.16), transparent 24%),
+                linear-gradient(135deg, #132238 0%, #203c55 50%, #315f72 100%);
         }
 
-        .login-card {
+        .auth-card {
+            width: 100%;
+            max-width: 1040px;
+            min-height: 640px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+            border-radius: 36px;
+            overflow: hidden;
             background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+        }
+
+        .auth-showcase,
+        .auth-form-pane {
             padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
         }
 
-        .login-card h2 {
-            margin-bottom: 1.5rem;
-            color: var(--text-color);
-            font-weight: 600;
+        .auth-showcase {
+            background:
+                radial-gradient(circle at top right, rgba(245, 158, 11, 0.18), transparent 28%),
+                linear-gradient(135deg, #102238 0%, #16334c 45%, #1d4a61 100%);
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .form-group {
-            margin-bottom: 1.2rem;
-            text-align: left;
+        .auth-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 800;
+            font-size: 1.15rem;
         }
 
-        .form-group label {
+        .auth-brand img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
             display: block;
+        }
+
+        .auth-showcase h1 {
+            font-size: clamp(2.3rem, 5vw, 3.8rem);
+            line-height: 1.02;
+            margin: 1rem 0;
+            max-width: 10ch;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        .auth-showcase p {
+            max-width: 48ch;
+            color: rgba(226, 232, 240, 0.82);
+        }
+
+        .auth-points {
+            display: grid;
+            gap: 0.8rem;
+            margin-top: 2rem;
+        }
+
+        .auth-point {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+            padding: 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-form-pane {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-form-pane h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
             margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #666;
         }
 
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box; /* Ensures padding doesn't affect width */
-            transition: border-color 0.3s ease;
-            font-size: 1rem;
+        @media (max-width: 991px) {
+            .auth-card {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
         }
 
-        input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
-        }
+        @media (max-width: 540px) {
+            body.auth-page {
+                padding: 1rem;
+            }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background: var(--bg-gradient);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-            margin-top: 1rem;
-        }
-
-        button:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .footer-text {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #777;
-        }
-
-        .footer-text a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
+            .auth-showcase,
+            .auth-form-pane {
+                padding: 1.5rem;
+            }
         }
     </style>
-    <title>Login</title>
 </head>
-<body>
+<body class="auth-page">
+    <div class="auth-card">
+        <section class="auth-showcase">
+            <div>
+                <div class="auth-brand">
+                    <img src="{% static 'image/CRM.png' %}" alt="EcomCRM Logo">
+                    <span>EcomCRM</span>
+                </div>
+                <h1>Run customer and order operations with clarity.</h1>
+                <p>
+                    Sign in to manage customers, inventory, delivery movement, analytics, and revenue from one cleaner workspace.
+                </p>
+            </div>
 
-<div class="login-card">
-    <h2>Welcome Back</h2>
-    
-    <form method="POST" class="form-container">
-        {% csrf_token %}
+            <div class="auth-points">
+                <div class="auth-point">
+                    <i class="fas fa-chart-line"></i>
+                    <div>
+                        <strong>Live business visibility</strong>
+                        <div>See order health, revenue movement, and customer activity at a glance.</div>
+                    </div>
+                </div>
+                <div class="auth-point">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <div>
+                        <strong>Modern media workflow</strong>
+                        <div>Customer and product images flow through Cloudinary-backed storage.</div>
+                    </div>
+                </div>
+                <div class="auth-point">
+                    <i class="fas fa-bolt"></i>
+                    <div>
+                        <strong>Fast operational actions</strong>
+                        <div>Create orders, update profiles, and manage tags without leaving the app rhythm.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required>
-        </div>
+        <section class="auth-form-pane">
+            <h2>Welcome back</h2>
+            <p>Use your existing account to continue into the workspace.</p>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="••••••••" required>
-        </div>
+            {% if messages %}
+            <div class="surface-panel p-3 mb-4">
+                {% for message in messages %}
+                <div class="small fw-semibold {% if message.tags == 'error' %}text-danger{% else %}text-primary{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
-        <button type="submit">Login</button>
-    </form>
+            <form method="POST" class="auth-form">
+                {% csrf_token %}
 
-    <div class="footer-text">
-        Don't have an account? <a href="{% url 'registration' %}">Sign Up</a>
+                <div class="field-row">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+
+                <div class="field-row">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </div>
+            </form>
+
+            <div class="auth-alt">
+                Don’t have an account yet? <a href="{% url 'registration' %}">Create one now</a>
+            </div>
+        </section>
     </div>
-</div>
-
 </body>
 </html>

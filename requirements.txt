@@ -4,6 +4,9 @@ whitenoise==6.11.0
 dj-database-url==3.1.0
 psycopg2-binary==2.9.11
 django-filter==25.2
+cloudinary==1.44.1
+django-cloudinary-storage==0.3.0
 pillow==10.4.0
 python-dotenv==1.1.1
+groq==0.31.1
 

@@ -6,72 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcomCRM | Dashboard</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{% static 'CSS/main.css' %}">
-
-    <style>
-        /* Global Notification Styles */
-        .notification-container {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            z-index: 9999;
-            min-width: 320px;
-        }
-
-        .alert-card {
-            background: #ffffff;
-            border-left: 5px solid #00b894;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            padding: 18px 24px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            animation: slideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        /* Success vs Error colors */
-        .alert-card.success { border-left-color: #00b894; }
-        .alert-card.error { border-left-color: #ff4d4d; }
-        .alert-card.info { border-left-color: #0984e3; }
-
-        .alert-card .icon-circle {
-            background: #00b894;
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            flex-shrink: 0;
-            font-weight: bold;
-        }
-
-        .alert-card .msg-content {
-            color: #2d3436;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(120%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .fade-out-right {
-            transform: translateX(120%);
-            opacity: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'CSS/main.css' %}?v=20260325-04">
 </head>
 
 <body>
-
     {% include 'navbar.html' %}
 
     {% if messages %}
@@ -85,46 +30,97 @@
     </div>
     {% endif %}
 
-    <div class="main-wrapper">
-        <div class="container py-5">
+    <main class="main-wrapper">
+        <div class="container py-5 page-shell">
             {% block content %}
             {% endblock %}
         </div>
-    </div>
+    </main>
 
-    <footer class="site-footer mt-5">
+    <footer class="site-footer">
         <div class="container py-5">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <h3 class="fw-bold mb-3">EcomCRM</h3>
-                    <p class="text-light small mb-2">
-                        Premium ecommerce Retailer & CRM Dashboard with customer management features.
-                    </p>
-                    <p class="fw-semibold small mb-0">
-                        Developed by Rudranil Goswami.
-                    </p>
-                </div>
+            <div class="footer-shell">
+                <section class="footer-brand-panel">
+                    <span class="footer-badge">Professional Commerce CRM</span>
+                    <div class="footer-brand-row">
+                        <img src="{% static 'image/CRM.png' %}" alt="EcomCRM Logo">
+                        <div>
+                            <h2>EcomCRM</h2>
+                            <p>Built for teams that want customer operations, order visibility, inventory control, and revenue insight in one polished workspace.</p>
+                        </div>
+                    </div>
 
-                <div class="col-md-4">
-                    <h5 class="fw-semibold mb-3">Quick Links</h5>
-                    <ul class="list-unstyled footer-links">
-                        <li><a href="{% url 'home' %}" class="text-decoration-none text-light opacity-75">Dashboard</a></li>
-                        <li><a href="{% url 'customer_list' %}" class="text-decoration-none text-light opacity-75">Customers</a></li>
-                        <li><a href="{% url 'order_list' %}" class="text-decoration-none text-light opacity-75">Orders</a></li>
-                    </ul>
-                </div>
+                    <p class="footer-brand-note">
+                        From customer records to analytics and projected revenue, the product is designed to help
+                        teams move faster with clearer information and cleaner workflow.
+                    </p>
+                </section>
 
-                <div class="col-md-4">
-                    <h5 class="fw-semibold mb-3">Contact</h5>
-                    <p class="small mb-1">📞 +918371817646</p>
-                    <p class="small mb-1">📧 rudranilgoswami2005@gmail.com</p>
-                    <p class="small mb-0">📍 713373 Asansol, West Bengal, India</p>
-                </div>
+                <section class="footer-links-panel">
+                    <div>
+                        <h5>Workspace</h5>
+                        <div class="footer-link-list">
+                            <a href="{% url 'home' %}">Dashboard</a>
+                            <a href="{% url 'customer_list' %}">Customers</a>
+                            <a href="{% url 'order_list' %}">Orders</a>
+                            <a href="{% url 'product' %}">Products</a>
+                            <a href="{% url 'tag_list' %}">Tags</a>
+                            <a href="{% url 'analytics' %}">Analytics</a>
+                            <a href="{% url 'revenue' %}">Revenue</a>
+                            <a href="{% url 'ask_to_ai' %}">ASK to AI</a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5>Company</h5>
+                        <div class="footer-link-list">
+                            <a href="{% url 'about' %}">About Us</a>
+                            <a href="{% url 'contact' %}">Contact Us</a>
+                            <a href="{% url 'create_customer' %}">Add Customer</a>
+                            <a href="{% url 'create_orders' %}">Create Order</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="footer-contact-panel">
+                    <h5>Contact</h5>
+                    <p class="footer-contact-copy">
+                        Reach out for onboarding help, implementation guidance, support questions, or product feedback.
+                    </p>
+                    <div class="footer-contact-list">
+                        <div class="footer-contact-item">
+                            <span class="footer-contact-icon"><i class="bi bi-telephone"></i></span>
+                            <div>
+                                <small>Phone</small>
+                                <strong>+91 8371817646</strong>
+                            </div>
+                        </div>
+                        <div class="footer-contact-item">
+                            <span class="footer-contact-icon"><i class="bi bi-envelope"></i></span>
+                            <div>
+                                <small>Email</small>
+                                <strong>rudranilgoswami2005@gmail.com</strong>
+                            </div>
+                        </div>
+                        <div class="footer-contact-item">
+                            <span class="footer-contact-icon"><i class="bi bi-geo-alt"></i></span>
+                            <div>
+                                <small>Location</small>
+                                <strong>Asansol, West Bengal, India</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a class="footer-contact-cta" href="{% url 'contact' %}">Open Contact Page</a>
+                </section>
             </div>
         </div>
 
-        <div class="footer-bottom text-center py-3">
-            © 2026 OrderTrack | All Rights Reserved
+        <div class="footer-bottom">
+            <div class="container footer-bottom-row">
+                <span>© {% now "Y" %} EcomCRM. Designed for clearer operations and better customer visibility.</span>
+                <span>Built with Django, Cloudinary, analytics, and revenue tracking.</span>
+            </div>
         </div>
     </footer>
 
@@ -132,13 +128,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             const notifications = document.querySelectorAll('.alert-card');
             notifications.forEach((note) => {
-                // Wait 4 seconds, then slide out
                 setTimeout(() => {
                     note.classList.add('fade-out-right');
-                    setTimeout(() => note.remove(), 600);
-                }, 4000);
+                    setTimeout(() => note.remove(), 450);
+                }, 3600);
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,242 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<style>
+    .contact-shell {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .contact-grid,
+    .reach-grid,
+    .support-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .contact-grid {
+        grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.9fr);
+    }
+
+    .reach-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .support-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contact-panel,
+    .contact-side,
+    .reach-card,
+    .support-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        padding: 1.45rem;
+    }
+
+    .reach-card,
+    .contact-item {
+        min-width: 0;
+    }
+
+    .section-kicker {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+    }
+
+    .contact-panel h3,
+    .contact-side h3,
+    .reach-card h3,
+    .support-card h3 {
+        margin: 0 0 0.6rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .reach-card h3 {
+        font-size: clamp(1.25rem, 2vw, 1.8rem);
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .contact-panel p,
+    .contact-side p,
+    .reach-card p,
+    .support-card p {
+        color: var(--ink-500);
+        margin: 0;
+    }
+
+    .contact-list {
+        display: grid;
+        gap: 0.95rem;
+        margin-top: 1rem;
+    }
+
+    .contact-item {
+        display: flex;
+        gap: 0.9rem;
+        align-items: flex-start;
+        border-radius: 22px;
+        background: rgba(20, 34, 53, 0.04);
+        border: 1px solid var(--line-soft);
+        padding: 1rem 1.1rem;
+    }
+
+    .contact-icon {
+        width: 2.8rem;
+        height: 2.8rem;
+        border-radius: 18px;
+        background: rgba(15, 118, 110, 0.12);
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+    }
+
+    .contact-item small {
+        display: block;
+        color: var(--ink-500);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.7rem;
+        font-weight: 800;
+        margin-bottom: 0.2rem;
+    }
+
+    .contact-item strong {
+        display: block;
+        color: var(--ink-900);
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .reach-card .btn {
+        margin-top: 1rem;
+    }
+
+    .hours-box {
+        border-radius: 22px;
+        background: rgba(37, 99, 235, 0.08);
+        border: 1px solid rgba(37, 99, 235, 0.12);
+        padding: 1rem 1.1rem;
+        margin-top: 1rem;
+    }
+
+    .hours-box strong {
+        display: block;
+        color: var(--ink-900);
+        margin-bottom: 0.25rem;
+    }
+
+    @media (max-width: 1100px) {
+        .contact-grid,
+        .reach-grid,
+        .support-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="contact-shell">
+    <section class="app-hero">
+        <span class="page-kicker">Contact Us</span>
+        <h1 class="page-title">Talk to us about setup, support, workflow, or growth.</h1>
+        <p class="page-copy">
+            Whether you need help with operations, onboarding, or improving how the workspace fits your business,
+            use the contact paths below and we’ll make the next step simple.
+        </p>
+    </section>
+
+    <section class="contact-grid">
+        <article class="contact-panel">
+            <span class="section-kicker">Reach The Team</span>
+            <h3>Professional support should feel direct and easy to use.</h3>
+            <p>
+                Use the route that fits your need best. Phone works well for urgent questions, email is ideal for
+                deeper support, and location details are here if you need the business reference information.
+            </p>
+
+            <div class="contact-list">
+                {% for method in contact_methods %}
+                <div class="contact-item">
+                    <span class="contact-icon"><i class="bi {{ method.icon }}"></i></span>
+                    <div>
+                        <small>{{ method.eyebrow }}</small>
+                        <strong>{{ method.value }}</strong>
+                        <p>{{ method.copy }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </article>
+
+        <aside class="contact-side">
+            <span class="section-kicker">Availability</span>
+            <h3>Support designed for real operating teams.</h3>
+            <p>
+                We focus on quick guidance, clear answers, and practical help that improves day-to-day workflow
+                instead of sending teams through unnecessary steps.
+            </p>
+
+            <div class="hours-box">
+                <strong>Support Hours</strong>
+                <p>Monday to Saturday, 10:00 AM to 7:00 PM IST</p>
+            </div>
+
+            <div class="hours-box">
+                <strong>Best For</strong>
+                <p>Setup help, feature guidance, operations questions, UI feedback, and workflow improvements.</p>
+            </div>
+        </aside>
+    </section>
+
+    <section class="reach-grid">
+        {% for method in contact_methods %}
+        <article class="reach-card">
+            <span class="section-kicker">{{ method.eyebrow }}</span>
+            <h3>{{ method.value }}</h3>
+            <p>{{ method.copy }}</p>
+            <a class="btn btn-outline-secondary" href="{{ method.href }}">{{ method.cta }}</a>
+        </article>
+        {% endfor %}
+    </section>
+
+    <section class="support-grid">
+        <article class="support-card">
+            <span class="section-kicker">Implementation</span>
+            <h3>Need help getting the workspace into production shape?</h3>
+            <p>
+                Reach out for support with product setup, Cloudinary media flow, and shaping the interface into
+                something your team can use confidently every day.
+            </p>
+        </article>
+
+        <article class="support-card">
+            <span class="section-kicker">Product Feedback</span>
+            <h3>Have ideas for better workflow or cleaner presentation?</h3>
+            <p>
+                This workspace improves when feedback stays close to real usage. UI polish, reporting needs, and
+                operational pain points are all welcome topics.
+            </p>
+        </article>
+    </section>
+</div>
+
+{% endblock %}

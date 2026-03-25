@@ -1,132 +1,198 @@
-<style>
-    /* Google Font for a modern feel */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcomCRM | Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'CSS/main.css' %}?v=20260325-04">
+    <style>
+        body.auth-page {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 2rem 1rem;
+            background:
+                radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.16), transparent 24%),
+                linear-gradient(135deg, #132238 0%, #203c55 50%, #315f72 100%);
+        }
 
-    body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Inter', sans-serif;
-        margin: 0;
-    }
+        .auth-card {
+            width: 100%;
+            max-width: 1040px;
+            min-height: 640px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+            border-radius: 36px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+        }
 
-    .login-card {
-        background: rgba(255, 255, 255, 0.95);
-        padding: 2.5rem;
-        border-radius: 16px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        width: 100%;
-        max-width: 400px;
-        transition: transform 0.3s ease;
-    }
+        .auth-showcase,
+        .auth-form-pane {
+            padding: 2.5rem;
+        }
 
-    .login-card:hover {
-        transform: translateY(-5px);
-    }
+        .auth-showcase {
+            background:
+                radial-gradient(circle at top right, rgba(245, 158, 11, 0.18), transparent 28%),
+                linear-gradient(135deg, #102238 0%, #16334c 45%, #1d4a61 100%);
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-    h2 {
-        margin: 0 0 1.5rem;
-        color: #333;
-        text-align: center;
-        font-weight: 600;
-        font-size: 1.75rem;
-    }
+        .auth-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 800;
+            font-size: 1.15rem;
+        }
 
-    .form-group {
-        margin-bottom: 1.25rem;
-        display: flex;
-        flex-direction: column;
-    }
+        .auth-brand img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+            display: block;
+        }
 
-    .form-group label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #555;
-        margin-bottom: 0.5rem;
-    }
+        .auth-showcase h1 {
+            font-size: clamp(2.3rem, 5vw, 3.8rem);
+            line-height: 1.02;
+            margin: 1rem 0;
+            max-width: 10ch;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
 
-    /* Styling the Django field inputs */
-    .form-group input, 
-    .form-group select, 
-    .form-group textarea {
-        padding: 12px 15px;
-        border: 1.5px solid #e1e1e1;
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        outline: none;
-    }
+        .auth-showcase p {
+            max-width: 48ch;
+            color: rgba(226, 232, 240, 0.82);
+        }
 
-    .form-group input:focus {
-        border-color: #764ba2;
-        box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.1);
-    }
+        .auth-points {
+            display: grid;
+            gap: 0.8rem;
+            margin-top: 2rem;
+        }
 
-    .error-text {
-        color: #ff4d4d;
-        font-size: 0.75rem;
-        margin-top: 0.4rem;
-        font-weight: 500;
-    }
+        .auth-point {
+            display: flex;
+            gap: 0.8rem;
+            align-items: flex-start;
+            padding: 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
 
-    button {
-        width: 100%;
-        padding: 12px;
-        background: #764ba2;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        margin-top: 1rem;
-    }
+        .auth-form-pane {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-    button:hover {
-        background: #5a3782;
-    }
+        .auth-form-pane h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 0.5rem;
+        }
 
-    .footer-text {
-        text-align: center;
-        margin-top: 1.5rem;
-        font-size: 0.9rem;
-        color: #666;
-    }
+        @media (max-width: 991px) {
+            .auth-card {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+        }
 
-    .footer-text a {
-        color: #764ba2;
-        text-decoration: none;
-        font-weight: 600;
-    }
+        @media (max-width: 540px) {
+            body.auth-page {
+                padding: 1rem;
+            }
 
-    .footer-text a:hover {
-        text-decoration: underline;
-    }
-</style>
-
-<div class="login-card">
-    <h2>Join Our Community</h2>
-    
-    <form method="POST" class="form-container">
-        {% csrf_token %}
-
-        {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <small class="error-text">{{ field.errors|striptags }}</small>
-                {% endif %}
+            .auth-showcase,
+            .auth-form-pane {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="auth-page">
+    <div class="auth-card">
+        <section class="auth-showcase">
+            <div>
+                <div class="auth-brand">
+                    <img src="{% static 'image/CRM.png' %}" alt="EcomCRM Logo">
+                    <span>EcomCRM</span>
+                </div>
+                <h1>Bring your team into a cleaner commerce workspace.</h1>
+                <p>
+                    Create an account to manage customer records, product inventory, tags, analytics, and revenue planning from one place.
+                </p>
             </div>
-        {% endfor %}
 
-        <button type="submit">Create Account</button>
-    </form>
+            <div class="auth-points">
+                <div class="auth-point">
+                    <i class="fas fa-users"></i>
+                    <div>
+                        <strong>Customer-first organization</strong>
+                        <div>Keep profiles, orders, and activity tied together in a practical CRM flow.</div>
+                    </div>
+                </div>
+                <div class="auth-point">
+                    <i class="fas fa-tags"></i>
+                    <div>
+                        <strong>Inventory + taxonomy</strong>
+                        <div>Catalog products and tags in a system that stays simple to maintain.</div>
+                    </div>
+                </div>
+                <div class="auth-point">
+                    <i class="fas fa-wallet"></i>
+                    <div>
+                        <strong>Revenue-aware decisions</strong>
+                        <div>Track daily revenue and see annual projections alongside operational data.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <div class="footer-text">
-        Already have an account? <a href="{% url 'login' %}">Login in</a>
+        <section class="auth-form-pane">
+            <h2>Create your account</h2>
+            <p>Set up a new workspace login without changing any existing business flows.</p>
+
+            <form method="POST" class="auth-form">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="field-row">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <small class="error-text">{{ field.errors|striptags }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </div>
+            </form>
+
+            <div class="auth-alt">
+                Already have an account? <a href="{% url 'login' %}">Sign in instead</a>
+            </div>
+        </section>
     </div>
-</div>
+</body>
+</html>

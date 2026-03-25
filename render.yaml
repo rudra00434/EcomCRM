@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: ecomcrm
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn db.wsgi:application"
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.2"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: "https://*.onrender.com"
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
