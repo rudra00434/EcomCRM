@@ -2,10 +2,14 @@ from multiprocessing import context
 from datetime import date
 import json
 from pickle import GET 
+import mimetypes
+from pathlib import Path
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
+from django.http import FileResponse, Http404, HttpResponse, JsonResponse
 from django.shortcuts import render,redirect
+from django.conf import settings
 from .models import Customer,Tag,Product,order
+from .media_utils import resolve_local_media_path
 from .forms import OrderForm,updateOrderForm,CustomerForm,ProductForm
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
@@ -447,6 +451,32 @@ def contact_page(request):
         ],
     }
     return render(request, 'account/contact.html', context)
+
+
+@login_required(login_url='login')
+def media_fallback(request, file_path):
+    media_root = Path(settings.MEDIA_ROOT).resolve()
+    local_path = resolve_local_media_path(file_path)
+    if not local_path:
+        raise Http404("File not found.")
+
+    resolved_path = local_path.resolve()
+
+    if media_root not in resolved_path.parents and resolved_path != media_root:
+        raise Http404("File not found.")
+
+    extension_types = {
+        ".webp": "image/webp",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+        ".gif": "image/gif",
+    }
+    content_type = extension_types.get(resolved_path.suffix.lower())
+    if not content_type:
+        content_type = mimetypes.guess_type(str(resolved_path))[0] or "application/octet-stream"
+
+    return FileResponse(resolved_path.open("rb"), content_type=content_type)
 
 
 @login_required(login_url='login')

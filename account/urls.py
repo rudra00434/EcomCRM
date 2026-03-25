@@ -27,6 +27,7 @@ urlpatterns=[
     path('ask-to-ai/reset/', views.ask_to_ai_reset, name='ask_to_ai_reset'),
     path('about/', views.about_page, name='about'),
     path('contact/', views.contact_page, name='contact'),
+    path('media-fallback/<path:file_path>/', views.media_fallback, name='media_fallback'),
     path('tag_list/',views.tag_list,name='tag_list'),
     path('import_tag_csv/',views.import_tag_csv,name='import_tag_csv')
     

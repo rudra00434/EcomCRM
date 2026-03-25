@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% load media_helpers %}
 {% block content %}
 
 <style>
@@ -23,7 +24,7 @@
         </div>
 
         {% if form.instance.pic %}
-        <img class="product-preview" src="{{ form.instance.pic.url }}" alt="{{ form.instance.name }}">
+        <img class="product-preview" src="{{ form.instance.pic.url }}" alt="{{ form.instance.name }}" data-fallback-src="{{ form.instance.pic|media_fallback_url }}" onerror="this.onerror=null;this.src=this.dataset.fallbackSrc;">
         {% endif %}
 
         <form action="" method="POST" enctype="multipart/form-data" class="app-form">

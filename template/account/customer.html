@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% load media_helpers %}
 {% block content %}
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -323,7 +324,7 @@
                 <div class="profile-persona">
                     <div class="avatar-frame">
                         {% if customer.profile_image %}
-                        <img src="{{ customer.profile_image.url }}" alt="{{ customer.name }}">
+                        <img src="{{ customer.profile_image.url }}" alt="{{ customer.name }}" data-fallback-src="{{ customer.profile_image|media_fallback_url }}" onerror="this.onerror=null;this.src=this.dataset.fallbackSrc;">
                         {% else %}
                         {{ customer.name|slice:":1"|upper }}
                         {% endif %}

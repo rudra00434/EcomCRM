@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% load media_helpers %}
 {% block content %}
 
 <style>
@@ -267,7 +268,7 @@
             <div class="card-header-row">
                 <div class="avatar-shell">
                     {% if i.profile_image %}
-                    <img src="{{ i.profile_image.url }}" alt="{{ i.name }}">
+                    <img src="{{ i.profile_image.url }}" alt="{{ i.name }}" data-fallback-src="{{ i.profile_image|media_fallback_url }}" onerror="this.onerror=null;this.src=this.dataset.fallbackSrc;">
                     {% else %}
                     {{ i.name|slice:":1"|upper }}
                     {% endif %}

@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from pathlib import Path
 from unittest import mock
 
 from django.contrib.auth.models import User
@@ -147,3 +148,33 @@ class AskToAIViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["ok"], True)
         self.assertEqual(self.client.session.get("ask_to_ai_history"), None)
+
+
+@override_settings(
+    ALLOWED_HOSTS=["testserver", "localhost"],
+    STORAGES={
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    },
+)
+class MediaFallbackTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="media-user", password="secret123")
+
+    def test_media_fallback_serves_local_image_for_cloudinary_style_name(self):
+        media_file = Path("media/product_image/Denver_hCvyuIj.webp")
+        self.assertTrue(media_file.exists(), "Expected sample media file is missing from the repository.")
+
+        product = Product.objects.create(
+            name="Denver",
+            price=100,
+            category="Indoor",
+            description="Sample product",
+            pic="ecomcrm/media/product_image/Denver_hCvyuIj_trwzgc",
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.get(f"/media-fallback/{product.pic.name}/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/webp")

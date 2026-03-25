@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% load media_helpers %}
 {% block content %}
 
 <style>
@@ -245,7 +246,7 @@
         <article class="product-card">
             <div class="product-media">
                 {% if i.pic %}
-                <img src="{{ i.pic.url }}" alt="{{ i.name }}">
+                <img src="{{ i.pic.url }}" alt="{{ i.name }}" data-fallback-src="{{ i.pic|media_fallback_url }}" onerror="this.onerror=null;this.src=this.dataset.fallbackSrc;">
                 {% else %}
                 <div class="product-placeholder">
                     <i class="bi bi-image"></i>
