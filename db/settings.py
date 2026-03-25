@@ -23,8 +23,33 @@ def csv_env(name, default=''):
     return [item.strip() for item in value.split(',') if item.strip()]
 
 
+def normalize_cloudinary_url(raw_value):
+    value = (raw_value or '').strip()
+    if not value:
+        return ''
+
+    if value.startswith('CLOUDINARY_URL='):
+        value = value.split('=', 1)[1].strip()
+
+    value = value.strip('"').strip("'").strip()
+    value = value.replace('<', '').replace('>', '').strip()
+
+    if value.lower().startswith('cloudinary://'):
+        return value
+
+    return ''
+
+
+SANITIZED_CLOUDINARY_URL = normalize_cloudinary_url(os.getenv('CLOUDINARY_URL'))
+
+if SANITIZED_CLOUDINARY_URL:
+    os.environ['CLOUDINARY_URL'] = SANITIZED_CLOUDINARY_URL
+else:
+    os.environ.pop('CLOUDINARY_URL', None)
+
+
 USE_CLOUDINARY = bool(
-    os.getenv('CLOUDINARY_URL') or (
+    SANITIZED_CLOUDINARY_URL or (
         os.getenv('CLOUDINARY_CLOUD_NAME')
         and os.getenv('CLOUDINARY_API_KEY')
         and os.getenv('CLOUDINARY_API_SECRET')
