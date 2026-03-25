@@ -3,7 +3,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import storages
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from account.models import Customer, Product
 
@@ -15,9 +15,12 @@ class Command(BaseCommand):
         active_storage = storages["default"]
 
         if active_storage.__class__.__module__.startswith("django.core.files.storage"):
-            raise CommandError(
-                "Default storage is still local. Enable Cloudinary in .env before running this command."
+            self.stdout.write(
+                self.style.WARNING(
+                    "Default storage is still local. Skipping Cloudinary sync."
+                )
             )
+            return
 
         specs = (
             (Customer, "profile_image", "Customer"),
