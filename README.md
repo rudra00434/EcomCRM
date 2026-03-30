@@ -375,3 +375,5 @@ This repository demonstrates the ability to:
 ## Closing Note
 
 EcomCRM is a strong portfolio project for full-stack, backend, product engineering, and AI-integrated web roles because it shows more than coding ability. It shows product judgment, system integration, deployability, UI execution, and resilience under real-world edge cases.
+  ### Build by Rudranil Goswami 
+  ### contact email : tatairudra39@gmail.com
