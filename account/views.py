@@ -42,7 +42,7 @@ def registerpage(request):
             user_name = form.cleaned_data.get('username')
             messages.success(request, f"Account was created for {user_name}")
             # IMPORTANT: Redirect to login or home after success
-            return redirect('home') 
+            return redirect('/') 
             
     context = {'form': form}
     return render(request, 'account/registration.html', context)
