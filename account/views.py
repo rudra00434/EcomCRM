@@ -70,7 +70,7 @@ def loginpage(request):
         return render(request,'account/login.html')
 
             
-@login_required(login_url='login')    
+   
 def Home(request):
     orders=order.objects.all()
     customers=Customer.objects.all()
