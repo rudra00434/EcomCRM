@@ -315,7 +315,8 @@ Current automated coverage includes:
 - production media fallback behavior
 
 ---
-## Demo ScreenShots & UI/UX
+## Demo UI/UX Screenshots of EcomCRM
+![WhatsApp Image 2026-03-31 at 1 19 03 AM (1)](https://github.com/user-attachments/assets/eb1df21f-5219-4803-a857-0d0d9ac50329)
 ![WhatsApp Image 2026-03-31 at 12 59 16 AM](https://github.com/user-attachments/assets/90c33153-6964-45f8-a745-1d7bd9465c9c)
 ![WhatsApp Image 2026-03-31 at 12 59 45 AM](https://github.com/user-attachments/assets/b1b6c678-bcc6-477b-81b9-74fb6c7c47df)
 ![WhatsApp Image 2026-03-31 at 1 00 14 AM](https://github.com/user-attachments/assets/76f518e6-64cc-488e-82d2-23100ead979c)
@@ -324,6 +325,9 @@ Current automated coverage includes:
 ![WhatsApp Image 2026-03-31 at 1 02 35 AM](https://github.com/user-attachments/assets/f6e92d0f-4428-4e85-a2fb-9d7040f2ea30)
 ![WhatsApp Image 2026-03-31 at 1 03 42 AM](https://github.com/user-attachments/assets/a938c290-f96d-41c5-83c5-2e8af798c2d8)
 ![WhatsApp Image 2026-03-31 at 1 04 24 AM](https://github.com/user-attachments/assets/feb8b982-a6c2-4ff8-8ddd-d719ac07312a)
+![WhatsApp Image 2026-03-31 at 1 25 20 AM](https://github.com/user-attachments/assets/3452496a-4a47-49fd-961b-ebb2652e8140)
+![WhatsApp Image 2026-03-31 at 1 22 57 AM](https://github.com/user-attachments/assets/d13bebc1-a77e-44f2-b473-f9a5f005f245)
+![WhatsApp Image 2026-03-31 at 1 24 43 AM](https://github.com/user-attachments/assets/deb8f33d-d2bc-40a6-9aaa-bd783ba0e597)
 
 ## Project Structure
 
