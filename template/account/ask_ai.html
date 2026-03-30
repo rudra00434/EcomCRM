@@ -181,7 +181,6 @@
         line-height: 1.65;
     }
 
-    /* User bubble: keep plain white-space pre-wrap as before */
     .chat-message.user .chat-bubble {
         background: linear-gradient(135deg, #102238, #1e4962);
         color: #f8fafc;
@@ -189,7 +188,6 @@
         white-space: pre-wrap;
     }
 
-    /* Assistant bubble: markdown-rendered, no pre-wrap */
     .chat-message.assistant .chat-bubble {
         background: rgba(255, 255, 255, 0.96);
         border: 1px solid var(--line-soft);
@@ -197,7 +195,7 @@
         border-bottom-left-radius: 10px;
     }
 
-    /* ── Markdown content styles (scoped to .md-body) ── */
+    /* ── Markdown styles ── */
     .md-body {
         line-height: 1.7;
         font-size: 0.96rem;
@@ -219,29 +217,19 @@
     .md-body h2 { font-size: 1.1rem; }
     .md-body h3 { font-size: 1rem; }
 
-    .md-body p {
-        margin: 0 0 0.75em;
-        color: inherit;
-    }
+    .md-body p { margin: 0 0 0.75em; color: inherit; }
 
     .md-body ul, .md-body ol {
         margin: 0.5em 0 0.75em 1.35em;
         padding: 0;
     }
 
-    .md-body li {
-        margin-bottom: 0.3em;
-    }
-
-    .md-body li > ul, .md-body li > ol {
-        margin-top: 0.3em;
-        margin-bottom: 0;
-    }
+    .md-body li { margin-bottom: 0.3em; }
+    .md-body li > ul, .md-body li > ol { margin-top: 0.3em; margin-bottom: 0; }
 
     .md-body strong { font-weight: 800; }
     .md-body em     { font-style: italic; }
 
-    /* Inline code */
     .md-body code {
         font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
         font-size: 0.875em;
@@ -252,7 +240,6 @@
         border: 1px solid rgba(15, 118, 110, 0.15);
     }
 
-    /* Code blocks */
     .md-body pre {
         background: #0f1c2e;
         border-radius: 14px;
@@ -272,7 +259,6 @@
         line-height: 1.65;
     }
 
-    /* Copy button that appears on code blocks */
     .code-copy-btn {
         position: absolute;
         top: 0.6rem;
@@ -289,10 +275,7 @@
         transition: background 0.18s ease, color 0.18s ease;
     }
 
-    .code-copy-btn:hover {
-        background: rgba(255,255,255,0.15);
-        color: #f1f5f9;
-    }
+    .code-copy-btn:hover { background: rgba(255,255,255,0.15); color: #f1f5f9; }
 
     .md-body blockquote {
         margin: 0.75em 0;
@@ -304,17 +287,9 @@
         font-style: italic;
     }
 
-    .md-body hr {
-        border: none;
-        border-top: 1px solid var(--line-soft);
-        margin: 1em 0;
-    }
+    .md-body hr { border: none; border-top: 1px solid var(--line-soft); margin: 1em 0; }
 
-    .md-body a {
-        color: var(--primary, #0f766e);
-        text-decoration: underline;
-        text-underline-offset: 3px;
-    }
+    .md-body a { color: var(--primary, #0f766e); text-decoration: underline; text-underline-offset: 3px; }
 
     .md-body table {
         width: 100%;
@@ -334,14 +309,9 @@
         border-bottom: 1px solid var(--line-soft);
     }
 
-    .md-body td {
-        padding: 0.5rem 0.85rem;
-        border-bottom: 1px solid var(--line-soft);
-    }
-
+    .md-body td { padding: 0.5rem 0.85rem; border-bottom: 1px solid var(--line-soft); }
     .md-body tr:last-child td { border-bottom: none; }
     .md-body tr:nth-child(even) td { background: rgba(15, 118, 110, 0.03); }
-
     /* ── end markdown styles ── */
 
     .bubble-label {
@@ -374,9 +344,7 @@
         font-weight: 700;
     }
 
-    .source-chip:hover {
-        color: var(--info);
-    }
+    .source-chip:hover { color: var(--info); }
 
     .chat-form {
         margin-top: 1rem;
@@ -391,10 +359,7 @@
         align-items: end;
     }
 
-    .chat-form textarea {
-        min-height: 118px;
-        resize: vertical;
-    }
+    .chat-form textarea { min-height: 118px; resize: vertical; }
 
     .chat-actions {
         display: flex;
@@ -404,16 +369,9 @@
         flex-wrap: wrap;
     }
 
-    .helper-copy {
-        color: var(--ink-500);
-        font-size: 0.92rem;
-    }
+    .helper-copy { color: var(--ink-500); font-size: 0.92rem; }
 
-    .typing {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
+    .typing { display: inline-flex; align-items: center; gap: 0.4rem; }
 
     .typing span {
         width: 0.45rem;
@@ -433,20 +391,12 @@
     }
 
     @media (max-width: 1100px) {
-        .ai-grid,
-        .ai-capability-grid {
-            grid-template-columns: 1fr;
-        }
+        .ai-grid, .ai-capability-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 640px) {
-        .chat-input-row {
-            grid-template-columns: 1fr;
-        }
-
-        .chat-bubble {
-            max-width: 100%;
-        }
+        .chat-input-row { grid-template-columns: 1fr; }
+        .chat-bubble     { max-width: 100%; }
     }
 </style>
 
@@ -519,7 +469,6 @@
                         <div class="chat-bubble">
                             <span class="bubble-label">{% if item.role == 'assistant' %}ASK to AI{% else %}You{% endif %}</span>
                             {% if item.role == 'assistant' %}
-                                {# Markdown rendering handled client-side; raw content placed in data attr #}
                                 <div class="md-body" data-raw="{{ item.content|escapejs }}"></div>
                             {% else %}
                                 {{ item.content }}
@@ -586,70 +535,66 @@
 
 {{ suggested_prompts|json_script:"ask-ai-prompts" }}
 
-<!-- marked.js for markdown rendering (pinned minor version, loaded from cdnjs) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js" integrity="sha512-rfX4p3RNnSNmQpEF+yFJnS1tEzGr9O4OFBbUMGBwGP7TGfZhgpA8zNxF5e1WZbKD0Df/m/q5FVh89pzObsXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- marked.js — no integrity hash so browser never blocks it -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 
 <script>
-    // ── marked configuration ──────────────────────────────────────────────────
-    marked.setOptions({
-        breaks: true,       // single newline → <br>
-        gfm: true,          // GitHub-flavoured markdown (tables, fenced code, etc.)
-        pedantic: false,
-    });
+    // ── marked setup (guarded — chat still works if CDN is unreachable) ──────
+    if (typeof marked !== 'undefined') {
+        marked.setOptions({ breaks: true, gfm: true, pedantic: false });
+    }
 
-    /**
-     * Render a markdown string into an existing .md-body element
-     * and wire up copy buttons on any <pre> blocks.
-     */
     function renderMarkdown(el, rawText) {
-        el.innerHTML = marked.parse(rawText || '');
+        if (typeof marked !== 'undefined') {
+            el.innerHTML = marked.parse(rawText || '');
+        } else {
+            el.textContent = rawText || '';
+        }
 
-        // Add a copy button to every fenced code block
-        el.querySelectorAll('pre').forEach((pre) => {
-            const btn = document.createElement('button');
+        // Copy button for every fenced code block
+        el.querySelectorAll('pre').forEach(function (pre) {
+            var btn = document.createElement('button');
             btn.className = 'code-copy-btn';
+            btn.type = 'button'; // critical: prevent triggering form submit
             btn.textContent = 'Copy';
-            btn.setAttribute('aria-label', 'Copy code');
-            pre.style.position = 'relative';
             pre.appendChild(btn);
-
-            btn.addEventListener('click', () => {
-                const code = pre.querySelector('code');
+            btn.addEventListener('click', function () {
+                var code = pre.querySelector('code');
                 navigator.clipboard.writeText(code ? code.innerText : pre.innerText)
-                    .then(() => {
+                    .then(function () {
                         btn.textContent = 'Copied!';
-                        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+                        setTimeout(function () { btn.textContent = 'Copy'; }, 2000);
                     })
-                    .catch(() => {
+                    .catch(function () {
                         btn.textContent = 'Error';
-                        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+                        setTimeout(function () { btn.textContent = 'Copy'; }, 2000);
                     });
             });
         });
     }
 
-    // Hydrate any .md-body elements that were server-rendered with a data-raw attr
-    document.querySelectorAll('.md-body[data-raw]').forEach((el) => {
+    // Hydrate any server-rendered assistant bubbles
+    document.querySelectorAll('.md-body[data-raw]').forEach(function (el) {
         renderMarkdown(el, el.getAttribute('data-raw'));
         el.removeAttribute('data-raw');
     });
 
-    // ── Chat logic (unchanged in structure, markdown-aware now) ──────────────
-    const chatWindow      = document.getElementById('chatWindow');
-    const chatForm        = document.getElementById('chatForm');
-    const chatMessage     = document.getElementById('chatMessage');
-    const sendButton      = document.getElementById('sendButton');
-    const resetChatButton = document.getElementById('resetChatButton');
-    const messageUrl      = "{% url 'ask_to_ai_message' %}";
-    const resetUrl        = "{% url 'ask_to_ai_reset' %}";
+    // ── Chat logic ────────────────────────────────────────────────────────────
+    var chatWindow      = document.getElementById('chatWindow');
+    var chatForm        = document.getElementById('chatForm');
+    var chatMessage     = document.getElementById('chatMessage');
+    var sendButton      = document.getElementById('sendButton');
+    var resetChatButton = document.getElementById('resetChatButton');
+    var messageUrl      = "{% url 'ask_to_ai_message' %}";
+    var resetUrl        = "{% url 'ask_to_ai_reset' %}";
 
     function getCsrfToken() {
-        const input = chatForm.querySelector('input[name=csrfmiddlewaretoken]');
+        var input = chatForm.querySelector('input[name=csrfmiddlewaretoken]');
         return input ? input.value : '';
     }
 
     function escapeHtml(value) {
-        return value
+        return (value || '')
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -657,142 +602,128 @@
             .replace(/'/g, '&#039;');
     }
 
-    /**
-     * Append a message bubble to the chat window.
-     *
-     * - User messages: plain-text, HTML-escaped (same as before).
-     * - Assistant messages: markdown-rendered via marked.js.
-     */
-    function appendMessage(role, content, sources = []) {
-        const wrapper = document.createElement('div');
-        wrapper.className = `chat-message ${role}`;
+    function appendMessage(role, content, sources) {
+        sources = sources || [];
+        var wrapper = document.createElement('div');
+        wrapper.className = 'chat-message ' + role;
 
-        const label = role === 'assistant' ? 'ASK to AI' : 'You';
+        var label = role === 'assistant' ? 'ASK to AI' : 'You';
 
-        let bodyHtml;
-        if (role === 'assistant') {
-            // Markdown path — create a container and render into it after insertion
-            bodyHtml = `<div class="md-body"></div>`;
-        } else {
-            // Plain-text path — escape and preserve newlines
-            const safeContent = escapeHtml(content || '').replace(/\n/g, '<br>');
-            bodyHtml = safeContent;
-        }
-
-        let sourcesHtml = '';
+        var sourcesHtml = '';
         if (sources.length) {
-            const chips = sources.map((s) =>
-                `<a class="source-chip" href="${s.url}">${escapeHtml(s.title)}</a>`
-            ).join('');
-            sourcesHtml = `<div class="source-wrap">${chips}</div>`;
+            var chips = sources.map(function (s) {
+                return '<a class="source-chip" href="' + s.url + '">' + escapeHtml(s.title) + '</a>';
+            }).join('');
+            sourcesHtml = '<div class="source-wrap">' + chips + '</div>';
         }
 
-        wrapper.innerHTML = `
-            <div class="chat-bubble">
-                <span class="bubble-label">${label}</span>
-                ${bodyHtml}
-                ${sourcesHtml}
-            </div>
-        `;
-
-        chatWindow.appendChild(wrapper);
-
-        // Render markdown now that the element is in the DOM
         if (role === 'assistant') {
-            const mdEl = wrapper.querySelector('.md-body');
-            renderMarkdown(mdEl, content || '');
+            wrapper.innerHTML =
+                '<div class="chat-bubble">' +
+                    '<span class="bubble-label">' + label + '</span>' +
+                    '<div class="md-body"></div>' +
+                    sourcesHtml +
+                '</div>';
+            chatWindow.appendChild(wrapper);
+            renderMarkdown(wrapper.querySelector('.md-body'), content);
+        } else {
+            var safeContent = escapeHtml(content).replace(/\n/g, '<br>');
+            wrapper.innerHTML =
+                '<div class="chat-bubble">' +
+                    '<span class="bubble-label">' + label + '</span>' +
+                    safeContent +
+                    sourcesHtml +
+                '</div>';
+            chatWindow.appendChild(wrapper);
         }
 
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
     function appendTyping() {
-        const wrapper = document.createElement('div');
+        var wrapper = document.createElement('div');
         wrapper.className = 'chat-message assistant';
         wrapper.id = 'typingBubble';
-        wrapper.innerHTML = `
-            <div class="chat-bubble">
-                <span class="bubble-label">ASK to AI</span>
-                <span class="typing"><span></span><span></span><span></span></span>
-            </div>
-        `;
+        wrapper.innerHTML =
+            '<div class="chat-bubble">' +
+                '<span class="bubble-label">ASK to AI</span>' +
+                '<span class="typing"><span></span><span></span><span></span></span>' +
+            '</div>';
         chatWindow.appendChild(wrapper);
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
     function removeTyping() {
-        const typingBubble = document.getElementById('typingBubble');
-        if (typingBubble) typingBubble.remove();
+        var el = document.getElementById('typingBubble');
+        if (el) el.remove();
     }
 
-    async function sendMessage(message) {
+    function sendMessage(message) {
         appendMessage('user', message);
         appendTyping();
         sendButton.disabled = true;
         sendButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Thinking';
 
-        try {
-            const response = await fetch(messageUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCsrfToken(),
-                },
-                body: JSON.stringify({ message }),
+        fetch(messageUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken(),
+            },
+            body: JSON.stringify({ message: message }),
+        })
+        .then(function (response) {
+            return response.json().then(function (payload) {
+                return { ok: response.ok, payload: payload };
             });
-
-            const payload = await response.json();
+        })
+        .then(function (result) {
             removeTyping();
-
-            if (!response.ok) {
-                appendMessage('assistant', payload.error || 'Something went wrong while talking to the assistant.');
+            if (!result.ok) {
+                appendMessage('assistant', result.payload.error || 'Something went wrong while talking to the assistant.');
                 return;
             }
-
-            appendMessage('assistant', payload.reply || 'No response was returned.', payload.sources || []);
-        } catch (error) {
+            appendMessage('assistant', result.payload.reply || 'No response was returned.', result.payload.sources || []);
+        })
+        .catch(function () {
             removeTyping();
             appendMessage('assistant', 'The assistant could not be reached right now. Please try again.');
-        } finally {
+        })
+        .finally(function () {
             sendButton.disabled = false;
             sendButton.innerHTML = '<i class="bi bi-send me-2"></i>Ask to AI';
-        }
+        });
     }
 
-    chatForm.addEventListener('submit', async (event) => {
+    chatForm.addEventListener('submit', function (event) {
         event.preventDefault();
-        const message = chatMessage.value.trim();
+        var message = chatMessage.value.trim();
         if (!message) return;
         chatMessage.value = '';
-        await sendMessage(message);
+        sendMessage(message);
     });
 
-    document.querySelectorAll('.js-suggestion').forEach((button) => {
-        button.addEventListener('click', () => {
+    document.querySelectorAll('.js-suggestion').forEach(function (button) {
+        button.addEventListener('click', function () {
             chatMessage.value = button.getAttribute('data-prompt');
             chatMessage.focus();
         });
     });
 
-    resetChatButton.addEventListener('click', async () => {
-        try {
-            await fetch(resetUrl, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': getCsrfToken() },
-            });
-        } catch (_) {
-            // Ignore reset failures; still clear the UI.
-        }
+    resetChatButton.addEventListener('click', function () {
+        fetch(resetUrl, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrfToken() },
+        }).catch(function () { /* ignore */ });
 
         chatWindow.innerHTML = '';
-        const wrapper = document.createElement('div');
+        var wrapper = document.createElement('div');
         wrapper.className = 'chat-message assistant';
-        wrapper.innerHTML = `
-            <div class="chat-bubble">
-                <span class="bubble-label">ASK to AI</span>
-                <div class="md-body"></div>
-            </div>
-        `;
+        wrapper.innerHTML =
+            '<div class="chat-bubble">' +
+                '<span class="bubble-label">ASK to AI</span>' +
+                '<div class="md-body"></div>' +
+            '</div>';
         chatWindow.appendChild(wrapper);
         renderMarkdown(
             wrapper.querySelector('.md-body'),
