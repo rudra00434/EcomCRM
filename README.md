@@ -315,6 +315,15 @@ Current automated coverage includes:
 - production media fallback behavior
 
 ---
+## Demo ScreenShots & UI/UX
+![WhatsApp Image 2026-03-31 at 12 59 16 AM](https://github.com/user-attachments/assets/90c33153-6964-45f8-a745-1d7bd9465c9c)
+![WhatsApp Image 2026-03-31 at 12 59 45 AM](https://github.com/user-attachments/assets/b1b6c678-bcc6-477b-81b9-74fb6c7c47df)
+![WhatsApp Image 2026-03-31 at 1 00 14 AM](https://github.com/user-attachments/assets/76f518e6-64cc-488e-82d2-23100ead979c)
+![WhatsApp Image 2026-03-31 at 1 01 07 AM](https://github.com/user-attachments/assets/3e296c0d-8c79-4eea-a437-9f83b424e249)
+![WhatsApp Image 2026-03-31 at 1 02 00 AM](https://github.com/user-attachments/assets/56c872d0-4774-40a8-9852-eef62f398171)
+![WhatsApp Image 2026-03-31 at 1 02 35 AM](https://github.com/user-attachments/assets/f6e92d0f-4428-4e85-a2fb-9d7040f2ea30)
+![WhatsApp Image 2026-03-31 at 1 03 42 AM](https://github.com/user-attachments/assets/a938c290-f96d-41c5-83c5-2e8af798c2d8)
+![WhatsApp Image 2026-03-31 at 1 04 24 AM](https://github.com/user-attachments/assets/feb8b982-a6c2-4ff8-8ddd-d719ac07312a)
 
 ## Project Structure
 
